@@ -1,0 +1,26 @@
+<!doctype html>
+<?xml version="1.0" encoding="utf-8"?>
+<head>
+ <style>
+  #main {
+    width: 840px;
+    height: 480px;
+  }
+  object {
+    border: solid 1pt black;
+    fill: red;
+    background-color: hsl(196,50%,50%);
+    width:24px;height:24px;
+    border-radius: 6pt;
+    padding:4pt;
+  }
+ </style>
+</head>
+<body>
+  <canvas id="main"></canvas>
+  <object type="image/svg+xml" data="search.svg"></object>
+</body>
+<script>
+  svgDoc=document.getElementsByTagName("object")[0]
+  svgDoc.onload=function(){svgDoc.contentDocument.children[0].style.fill="white"}
+</script>
