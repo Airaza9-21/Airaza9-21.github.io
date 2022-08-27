@@ -1,26 +1,25 @@
 <!doctype html>
 <?xml version="1.0" encoding="utf-8"?>
 <head>
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
  <style>
-  #main {
-    width: 840px;
-    height: 480px;
+  * {
+   padding: 0; margin: 0;
   }
-  object {
-    border: solid 1pt black;
-    fill: red;
-    background-color: hsl(196,50%,50%);
-    width:24px;height:24px;
-    border-radius: 6pt;
-    padding:4pt;
+  html {height: 100%;}
+  body {
+   background-color: black;
+   display: flex;
+   justifiy-content: center;
+   align-items: center;
+   font-family: 'Oswald' Arial;
+   color: white;
   }
  </style>
 </head>
 <body>
-  <canvas id="main"></canvas>
-  <object type="image/svg+xml" data="search.svg"></object>
+  <h1>SOMEBODY</h1>
 </body>
 <script>
-  svgDoc=document.getElementsByTagName("object")[0]
-  svgDoc.onload=function(){svgDoc.contentDocument.children[0].style.fill="white"}
+ 
 </script>
