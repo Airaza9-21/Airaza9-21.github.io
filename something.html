@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<style>
+			* {
+				padding: 0; margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				height: 100%;
+			}
+			body {
+				height: 100%;
+				background: #101820;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.carousell {
+				width: 1080px; height: 540px;
+				overflow: hidden;
+				display: flex;
+				justify-content: center;
+				position: relative;
+				color: #eee;
+			}
+			.carousell-buttons {
+				width: 100%;
+				position: absolute;
+				top: 50%;
+				display: flex;
+				justify-content: space-between;
+				z-index: 20;
+				padding: 0 20px;
+				opacity: 0;
+				transition: opacity 0.2s;
+			}
+			.carousell-buttons button {
+				width: 36px; height: 54px;
+				border: none;
+				background: rgba(0,0,0,0.2);
+				cursor: pointer;
+				transition: background 0.2s;
+			}
+			.carousell-buttons button:hover {
+				background: rgba(0,0,0,0.4);
+			}
+			.carousell-container {
+				width: 360px; height: 100%;
+				position: relative;
+			}
+			.carousell .carousell-content {
+				font-size: 18pt; font-family: Arial;
+				width: 80%; height: 60%;
+				background: white;
+				border-radius: 24pt;
+				text-align: center;
+				transform: translate(-50%,-50%);
+				position: absolute;
+				top: 50%; left: 50%;
+				transition-property: left,width,height;
+				transition-duration: 0.5s;
+			}
+
+			.shade {
+				width: 100%;
+				height: 100%;
+				z-index: 10;
+				display: flex;
+				justify-content: space-between;
+				position: absolute;
+				top: 0;
+			}
+			.shade div{
+				width: 128px;
+				height: 100%;
+			}
+			.shade .left {
+				background-image: radial-gradient(at left, rgba(0,0,0,0.6) -40%, transparent 60%);
+			}
+			.shade .right {
+				background-image: radial-gradient(at right, rgba(0,0,0,0.6) -40%, transparent 60%);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="carousell">
+			<div class="carousell-buttons">
+				<button onclick="carousell.swap(1)">
+					<svg width="100%" height="100%"><path d="M26 10 l-16 17 l16 17" style="stroke-width:4px;stroke:#333;fill:none" /></svg>
+				</button>
+				<button onclick="carousell.swap(-1)">
+					<svg width="100%" height="100%"><path d="M10 10 l16 17 l-16 17" style="stroke-width:4px;stroke:#333;fill:none" /></svg>
+				</button>
+			</div>
+			<div class="carousell-container">
+				<div class="carousell-content" style="background: hsl(349,85%,54%);">
+					Content 1
+				</div>
+				<div class="carousell-content" style="background: hsl(303,49%,39%);">
+					Content 2
+				</div>
+				<div class="carousell-content" style="background: hsl(322,80%,49%);">
+					Content 3
+				</div>
+				<div class="carousell-content" style="background: hsl(127,100%,33%);">
+					Content 4
+				</div>
+				<div class="carousell-content" style="background: hsl(191,100%,42%);">
+					Content 5
+				</div>
+			</div>
+			<div class="shade">
+				<div class="left"></div>
+				<div class="right"></div>
+			</div>
+		</div>
+	</body>
+	<script>
+		let c,d;
+		carousell = {
+			obj: document.getElementsByClassName("carousell")[0],
+			init: function(){/*
+				this.button = [this.obj.children[0],this.obj.children[1]]
+				this.button[0].onclick = this.scroll(-1)
+				this.button[1].onclick = this.scroll(1)*/
+				this.container = this.obj.children[1]
+				this.container.children[0].active = true
+				this.points = new Array(5)
+				for (c=0;c<5;c++){
+					this.points[c] = this.container.offsetWidth/2+(-2+c)*this.container.offsetWidth
+				}
+			},
+			scroll: function(direction){
+				cContents = this.container.children
+				for (c=0;c<cContents.length;c++){
+					cContents[c].style.visibility = "visible"
+					if (cContents[c].active){
+						cContents[c].style.left = this.points[2] + "px"
+						cContents[c].style.width = "90%"
+						cContents[c].style.height = "75%"
+					} else if (cContents[(c+1)%cContents.length].active){
+						cContents[c].style.left = this.points[1] + "px"
+						cContents[c].style.width = "80%"
+						cContents[c].style.height = "60%"
+					} else if (cContents[(cContents.length+c-1)%cContents.length].active){
+						cContents[c].style.left = this.points[3] + "px"
+						cContents[c].style.width = "80%"
+						cContents[c].style.height = "60%"
+					} else if (cContents[(cContents.length+c-2)%cContents.length].active){
+						if (direction > 0){
+							cContents[c].style.visibility = 'hidden'
+						}
+						cContents[c].style.left = this.points[4] + "px"
+					} else {
+						if (direction < 0){
+							cContents[c].style.visibility = 'hidden'
+						}
+						cContents[c].style.left = this.points[0] + "px"
+						//time = setInterval(demo,10)
+					}
+				}
+			},
+			swap: function(direction){
+				//clearTimeout(time); timer = 0
+				for (c=0;c<this.container.children.length;c++){
+					if (this.container.children[c].active){
+						this.container.children[c].active = false
+						this.container.children[(this.container.children.length+c+direction)%this.container.children.length].active = true
+						break;
+					}
+				}
+				this.scroll(direction)
+			}
+		}
+		carousell.init()
+		carousell.scroll()
+		var timer = 0
+		function demo(){
+			if (timer > 500){
+				timer = 0
+				carousell.swap(1)
+			}
+			timer++
+		}
+		carousell.obj.addEventListener("mouseover",function(e){carousell.obj.children[0].style.opacity="1"})
+		carousell.obj.addEventListener("mouseout",function(e){carousell.obj.children[0].style.opacity="0"})
+		//carousell.obj.addEventListener("touchstart",function(){console.log("touch start"); clearTimeout(time)})
+		//carousell.obj.addEventListener("touchend",function(){console.log("touch end"); time = setInterval(demo,10)})
+	</script>
+</html>
