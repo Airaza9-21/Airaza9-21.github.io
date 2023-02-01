@@ -1,0 +1,283 @@
+<!doctype html>
+<html>
+	<head>
+		<style type="text/css">
+			* {
+				padding: 0; margin: 0;
+				box-sizing: border-box;
+			}
+			.row {
+				display: flex;
+			}
+			.main {
+				flex-direction: column;
+			}
+			.text-container {
+				width: 160pt; height: 320pt;
+				border: solid 1pt black;
+				flex-direction: column;
+			}
+			.button {
+				width: 80pt; height: 80pt;
+				margin: 12pt;
+				background-color: #45a359;
+				border-radius: 12pt;
+				justify-content: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="main row">
+			<div class="text-container row" id="demo"></div>
+			<div class="buttons-container row">
+				<div class="button row" id="atk" onmousedown="atkStart()" onmouseup="atkEnd()">1</div>
+				<div class="button row" id="skill" onclick="skill()">2</div>
+				<div class="button row" id="burst" onclick="burst()">3</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+
+		let scale = {
+			char: [
+				[0,1.000, 1.083, 1.165, 1.248, 1.330, 1.413, 1.495, 1.578, 1.661, 1.743, 1.826, 1.908, 1.991, 2.073, 2.156, 2.239, 2.321, 2.404, 2.486, 2.569, 2.651, 2.734, 2.817, 2.899, 2.982, 3.064, 3.147, 3.229, 3.312, 3.394, 3.477, 3.560, 3.642, 3.725, 3.807, 3.890, 3.972, 4.055, 4.138, 4.220, 4.303, 4.385, 4.468, 4.550, 4.633, 4.716, 4.798, 4.881, 4.963, 5.046, 5.128, 5.211, 5.294, 5.376, 5.459, 5.541, 5.624, 5.706, 5.789, 5.872, 5.954, 6.037, 6.119, 6.202, 6.284, 6.367, 6.450, 6.532, 6.615, 6.697, 6.780, 6.862, 6.945, 7.028, 7.110, 7.193, 7.275, 7.358, 7.440, 7.523, 7.606, 7.688, 7.771, 7.853, 7.936, 8.018, 8.101, 8.183, 8.266, 8.349],
+				[0,1.000, 1.083, 1.166, 1.250, 1.333, 1.417, 1.500, 1.584, 1.668, 1.751, 1.835, 1.919, 2.003, 2.088, 2.172, 2.256, 2.341, 2.425, 2.510, 2.594, 2.679, 2.764, 2.849, 2.934, 3.019, 3.105, 3.190, 3.275, 3.361, 3.446, 3.532, 3.618, 3.704, 3.789, 3.875, 3.962, 4.048, 4.134, 4.220, 4.307, 4.393, 4.480, 4.567, 4.653, 4.740, 4.827, 4.914, 5.001, 5.089, 5.176, 5.263, 5.351, 5.438, 5.526, 5.614, 5.702, 5.790, 5.878, 5.966, 6.054, 6.142, 6.230, 6.319, 6.407, 6.496, 6.585, 6.673, 6.762, 6.851, 6.940, 7.029, 7.119, 7.208, 7.297, 7.387, 7.476, 7.566, 7.656, 7.746, 7.836, 7.926, 8.016, 8.106, 8.196, 8.286, 8.377, 8.467, 8.558, 8.649, 8.739]
+			],
+			asc: [0,38,65,101,128,155,182],
+			ascStats: [
+				[6,		7.5,	24,		0,		0,		6.7,	0	],
+				[7.2,	0,		28.8,	4.8,	9.6,	8,		5.5	],
+			],
+			talent: [
+				[0, 1, 1.081, 1.163, 1.279, 1.360, 1.453, 1.581, 1.709, 1.837, 1.977, 2.116, 2.256, 2.395, 2.535, 2.674],
+				[0, 1, 1.075, 1.150, 1.250, 1.325, 1.400, 1.500, 1.600, 1.700, 1.800, 1.900, 2.000, 2.125, 2.250, 2.375]
+			],
+			weap: [
+				[44.34, 1, 1.079, 1.159, 1.238, 1.317, 1.395, 1.474, 1.552, 1.631, 1.709, 1.787, 1.865, 1.942, 2.020, 2.098, 2.175, 2.253, 2.330, 2.408, 2.485, 2.562, 2.639, 2.717, 2.794, 2.871, 2.948, 3.026, 3.103, 3.180, 3.257, 3.334, 3.412, 3.489, 3.566, 3.644, 3.721, 3.798, 3.876, 3.953, 4.031, 4.109, 4.186, 4.264, 4.342, 4.419, 4.497, 4.575, 4.653, 4.731, 4.810, 4.888, 4.966, 5.044, 5.123, 5.201, 5.280, 5.359, 5.437, 5.516, 5.595, 5.674, 5.753, 5.833, 5.912, 5.991, 6.071, 6.150, 6.230, 6.310, 6.390, 6.470, 6.550, 6.630, 6.710, 6.791, 6.871, 6.952, 7.033, 7.113, 7.194, 7.275, 7.357, 7.438, 7.519, 7.601, 7.682, 7.764, 7.846, 7.928, 8.010],
+				[45.94, 1, 1.086, 1.171, 1.257, 1.343, 1.429, 1.516, 1.602, 1.689, 1.775, 1.862, 1.949, 2.036, 2.124, 2.211, 2.299, 2.386, 2.474, 2.562, 2.650, 2.738, 2.827, 2.915, 3.004, 3.093, 3.182, 3.271, 3.360, 3.450, 3.539, 3.629, 3.719, 3.809, 3.899, 3.989, 4.080, 4.170, 4.261, 4.352, 4.443, 4.534, 4.625, 4.717, 4.808, 4.900, 4.992, 5.084, 5.176, 5.268, 5.360, 5.453, 5.546, 5.638, 5.731, 5.825, 5.918, 6.011, 6.105, 6.198, 6.292, 6.386, 6.480, 6.575, 6.669, 6.763, 6.858, 6.953, 7.048, 7.143, 7.238, 7.334, 7.429, 7.525, 7.621, 7.717, 7.813, 7.909, 8.005, 8.102, 8.199, 8.295, 8.392, 8.489, 8.587, 8.684, 8.782, 8.879, 8.977, 9.075, 9.173],
+				[47.54, 1, 1.091, 1.183, 1.275, 1.368, 1.461, 1.554, 1.648, 1.743, 1.837, 1.933, 2.028, 2.124, 2.220, 2.317, 2.414, 2.511, 2.608, 2.706, 2.804, 2.903, 3.002, 3.101, 3.200, 3.300, 3.400, 3.500, 3.601, 3.701, 3.803, 3.904, 4.005, 4.107, 4.209, 4.312, 4.414, 4.517, 4.620, 4.723, 4.827, 4.931, 5.035, 5.139, 5.243, 5.348, 5.453, 5.558, 5.663, 5.768, 5.874, 5.980, 6.086, 6.192, 6.299, 6.406, 6.513, 6.620, 6.727, 6.835, 6.942, 7.050, 7.158, 7.267, 7.375, 7.484, 7.592, 7.701, 7.811, 7.920, 8.030, 8.139, 8.249, 8.359, 8.470, 8.580, 8.691, 8.802, 8.913, 9.024, 9.135, 9.247, 9.358, 9.470, 9.582, 9.694, 9.807, 9.919, 10.032, 10.145, 10.258],
+				[49.13, 1, 1.097, 1.194, 1.292, 1.391, 1.490, 1.590, 1.692, 1.792, 1.895, 1.998, 2.102, 2.206, 2.310, 2.415, 2.521, 2.627, 2.733, 2.841, 2.949, 3.057, 3.165, 3.274, 3.384, 3.493, 3.604, 3.714, 3.825, 3.937, 4.049, 4.161, 4.273, 4.386, 4.500, 4.613, 4.727, 4.841, 4.956, 5.071, 5.186, 5.301, 5.417, 5.533, 5.650, 5.767, 5.884, 6.000, 6.118, 6.236, 6.354, 6.473, 6.592, 6.710, 6.830, 6.949, 7.069, 7.190, 7.309, 7.430, 7.550, 7.671, 7.792, 7.913, 8.035, 8.157, 8.279, 8.401, 8.524, 8.646, 8.770, 8.893, 9.016, 9.140, 9.263, 9.387, 9.512, 9.636, 9.761, 9.886, 10.011, 10.136, 10.261, 10.387, 10.513, 10.639, 10.765, 10.892, 11.018, 11.145, 11.272]
+			],
+			weapAsc: [
+				0,
+				[0, 11.7, 23.3, 35.0, 46.7],
+				[0, 11.7, 23.3, 35.0, 46.7],
+				[0, 19.5, 38.9, 58.4, 77.8, 97.3, 116.7],
+				[0, 25.9, 51.9, 77.8, 103.7, 129.7, 155.6],
+				[0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7]
+			],
+			weapSub: [1.000, 1.162, 1.363, 1.565, 1.767, 1.969, 2.171, 2.373, 2.575, 2.777, 2.979, 3.181, 3.383, 3.585, 3.786, 3.988, 4.190, 4.392, 4.594],
+			artMain: [
+				[717,920,1123,1326,1530,1733,1936,2139,2342,2545,2749,2952,3155,3358,3561,3764,3967,4171,4374,4577,4780],
+				[47,60,73,86,100,113,126,139,152,166,179,192,205,219,232,245,258,272,285,298,311],
+				[7.0,9.0,11.0,12.9,14.9,16.9,18.9,20.9,22.8,24.8,26.8,28.8,30.8,32.8,34.7,36.7,38.7,40.7,42.7,44.6,46.6],
+				[8.7,11.2,13.7,16.2,18.6,21.1,23.6,26.1,28.6,31,33.5,36,38.5,40.9,43.4,45.9,48.4,50.8,53.3,55.8,58.3],
+				[28.0,35.9,43.8,51.8,59.7,67.6,75.5,83.5,91.4,99.3,107.2,115.2,123.1,131.0,138.9,146.9,154.8,162.7,170.6,178.6,186.5],
+				[7.8,10.0,12.2,14.4,16.6,18.8,21.0,23.2,25.4,27.6,29.8,32.0,34.2,36.4,38.6,40.8,43.0,45.2,47.4,49.6,51.8],
+				[4.7,6.0,7.3,8.6,10.0,11.3,12.6,13.9,15.2,16.6,17.9,19.2,20.5,21.9,23.2,24.5,25.8,27.2,28.5,29.8,31.1],
+				[9.3,12.0,14.6,17.3,19.9,22.5,25.2,27.8,30.5,33.1,35.7,38.4,41.0,43.7,46.3,49.0,51.6,54.2,56.9,59.6,62.2],
+				[5.4,6.9,8.4,10.0,11.5,13.0,14.5,16.1,17.6,19.1,20.6,22.1,23.7,25.2,26.7,28.2,29.8,31.3,32.8,34.3,35.9]
+			],
+			artSub: [
+				[
+					[167.30,191.20,215.10,239.00],
+					[10.89,12.45,14.00,15.56],
+					[12.96,14.82,16.67,18.52],
+					[3.26,3.73,4.20,4.66],
+					[3.26,3.73,4.20,4.66],
+					[4.08,4.66,5.25,5.83],
+					[13.06,14.92,16.79,18.56],
+					[3.63,4.14,4.66,5.18],
+					[2.18,2.49,2.80,3.11],
+					[4.35,4.97,5.60,6.22]
+				],
+				[
+					[209.13,239.00,268.88,298.75],
+					[13.62,15.56,17.51,19.45],
+					[16.20,18.52,20.83,23.15],
+					[4.08,4.66,5.25,5.83],
+					[4.08,4.66,5.25,5.83],
+					[5.10,5.83,6.56,7.29],
+					[16.32,18.65,20.98,23.31],
+					[4.53,5.18,5.83,6.48],
+					[2.72,3.11,3.50,3.89],
+					[5.44,6.22,6.99,7.77]
+				]
+			]
+
+		}
+
+		artLabel = ["HP", "ATK", "DEF", "HP%", "ATK%", "DEF%", "EM", "CR", "CD", "ER"]
+
+		let txt = '{"name": "someone", "type": 1, "weapType": 3, "talent": {"basic"	: [[  44.63,  41.79,  26.45,  68.63],[  43.86, 124.00,  87.20,  38.60]],"skill"	: [ 149.60],"burst"	: [  55.62,  67.98]},"base": [ 844.64154,  20.85440,  49.0606],"ascension"	: [3468.55470,  85.63319, 201.4740, 14],"atkC": "function(){return (this.talent.basic[1][2]*100 + this.talent.basic[1][3] * 400)/100}","skill": "function(){return this.talent.skill[0]}","burst": "function(){return (this.talent.burst[0]*100 + this.talent.burst[1]*100) * 6 / 100}"}';
+		let char = {}
+		function charInit(){
+			char = JSON.parse(txt);
+			char.atkC = eval("("+char.atkC+")")
+			char.skill = eval("("+char.skill+")")
+			char.burst = eval("("+char.burst+")")
+			char.level = [60,3]			//Lvl Asc Star
+
+			char.talentLevel = [6,6,6]
+			char.talentVal = Array(3)
+			char.talentVal[0] = Array(char.talent.basic.length)
+			char.talentVal[0][0] = Array(char.talent.basic[0].length)
+			char.talentVal[0][0].fill(0)
+			char.talentVal[0][1] = Array(char.talent.basic[1].length)
+			char.talentVal[0][1].fill(0)
+			char.talentVal[1] = Array(char.talent.skill.length)
+			char.talentVal[1].fill(0)
+			char.talentVal[2] = Array(char.talent.burst.length)
+			char.talentVal[2].fill(0)
+
+			char.weapon = [5,0,4,12,60,4]	//Star Base SubType SubBase Lvl Asc
+			// *, lvl, mainStat, statDest,	subtype, subscale, sublvl
+			// mainstat: HP ATK HP%/ATK%/B1-7 DEF%/B8 EM ER CR CD HB
+			// subtype: HP ATK DEF HP% ATK% DEF% EM CR CD ER
+			char.artifacts = [
+				// HP ATK DEF EM CR CD HB
+				[1,20,2,4,3,		4,2,1,	1,3,2,	5,1,0,	0,3,1],
+				// HP ATK DEF EM B1-B8
+				[1,20,2,14,3,		4,3,2,	2,3,1,	3,1,1,	5,2,2],
+				// HP ATK DEF EM ER
+				[1,20,4,6,4,		4,3,2,	2,3,1,	3,1,1,	5,2,2],
+				// ATK
+				[1,20,1,1,4,		4,3,2,	2,3,1,	3,1,1,	5,2,2],
+				// HP
+				[1,20,0,0,5,		4,3,2,	2,3,1,	3,1,1,	5,2,2]
+			]
+			// DMG Type: Pyro Hydro Anemo Electro Dendro Cryo Geo Physical
+			char.setBaseStats = function(){
+				stats = Array(3)
+				this.base.forEach(function(el,ind){stats[ind]=Math.round(scale.char[char.type][char.level[0]] * el * 1000 + char.ascension[ind] * scale.asc[char.level[1]] * 1000 / 182) / 1000})
+				stats[1] = (stats[1] * 1000 + scale.weap[this.weapon[1]][0] * scale.weap[this.weapon[1]][this.weapon[4]] * 1000 + scale.weapAsc[this.weapon[0]][this.weapon[5]] * 1000) / 1000
+				//		HP,			ATK,		DEF,	EM,	CR,	CD,	ER	B1,	B2, B3, B4, B5, B6, B7, B8, HB
+				this.baseStats = [
+					stats[0],	stats[1],	stats[2],	 0,	 5,	50,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0
+				]
+				this.setTalentVal()
+				this.setBonusStats()
+			}
+			char.setTalentVal = function(){
+				talent = this.talent
+				level = this.talentLevel
+				this.talentVal[0][0].forEach(function(el,ind,arr){
+					arr[ind] = Math.round(scale.talent[0][level[0]] * talent.basic[0][ind] * 100) / 100
+				})
+				this.talentVal[0][1].forEach(function(el,ind,arr){
+					arr[ind] = Math.round(scale.talent[0][level[0]] * talent.basic[1][ind] * 100) / 100
+				})
+				this.talentVal[1].forEach(function(el,ind,arr){
+					arr[ind] = Math.round(scale.talent[1][level[0]] * talent.skill[ind] * 100) / 100
+				})
+				this.talentVal[2].forEach(function(el,ind,arr){
+					arr[ind] = Math.round(scale.talent[1][level[0]] * talent.burst[ind] * 100) / 100
+				})
+			}
+			char.setBonusStats = function(){
+				//  HP,ATK,DEF,			HP% ATK% DEF%		EM,CR,CD,ER			B1,	B2,	B3,	B4,	B5,	B6,	B7,	B8, HB
+				this.bonusStats = [
+					0,	0,	0,			0,	0,	 0,			0,0,0,0,			0,0,0,0,0,0,0,0,0
+				]
+				switch(this.ascension[3]){
+					case 5:
+					case 17: type = 1; break;
+
+					case 6: type = 2; break;
+					case 7: type = 3; break;
+					case 8: type = 4; break;
+					case 9: type = 5; break;
+					case 18: type = 6; break;
+					default: type = 0; break;
+				}
+				this.bonusStats[this.ascension[3]] = scale.ascStats[this.type][type] * (this.level[1] - 1 - Math.floor(this.level[1]/4)) * 100
+				if (this.weapon[2] >= 0){
+					this.bonusStats[this.weapon[2]] += this.weapon[3] * scale.weapSub[Math.floor(this.weapon[4]/5)] * 100
+				}
+				artBonus = this.bonusStats
+				char.artifacts.forEach(function(el,ind){
+					artBonus[el[3]] += scale.artMain[el[2]][el[1]] * 100
+					var c = 0; str = '';
+					for (c = 0; c < Math.floor((el.length - 5)/3); c++){
+						artBonus[el[c*3+5]] += scale.artSub[el[0]][el[c*3+5]][el[c*3+6]] * el[c*3+7] * 100
+						str += artLabel[el[c*3+5]] + " " + scale.artSub[el[0]][el[c*3+5]][el[c*3+6]] * el[c*3+7] + "  "
+					}
+					console.log(str)
+				})
+				this.bonusStats.forEach(function(el,ind,arr){arr[ind] = el/100})
+				//console.log(this.bonusStats)
+			}
+			char.setStats = function(){
+				var bonus = this.bonusStats
+				this.stats = Array(16)
+				this.baseStats.forEach(function(el,ind,){
+					if (ind < 3){
+						char.stats[ind] = Math.round(el*1000 + el * 10 * bonus[ind+3] + bonus[ind]*1000)/1000
+					} else {
+						char.stats[ind] = Math.round(el*1000 + bonus[ind+3]*1000)/1000
+					}
+				})
+				this.updateStats()
+			}
+			char.updateStats = function(){
+				document.getElementById("demo").innerHTML = "<div>HP: "+Math.round(this.stats[0])+"</div><div>ATK: "+Math.round(this.stats[1])+"</div><div>DEF: "+Math.round(this.stats[2])+"</div>"
+			}
+			char.atkState = 0
+			char.clearAtkState = function(){char.atkState = 0}
+
+		}
+		charInit();
+
+		let atkTimeouts = [0,0,0,0]
+		let atkInterval = 0
+		let atkStatus = [false,false,false,false]
+		var atkNotBusy = true
+		var atkCharged = false
+		var fullCharged = false
+		function setAtkNotBusy(){atkNotBusy = true}
+		function setAtkCharged(){
+			atkCharged = true; console.log("charged")
+			clearInterval(atkTimeouts[0])
+			char.clearAtkState()
+			atkTimeouts[2] = setTimeout(function(){fullCharged = true; console.log("Charge level 1")},2000)
+			atkTimeouts[3] = setTimeout(function(){atkStatus[3] = true; console.log("Charge level 2")},4000)
+		}
+		function atkStart(){
+			atkTimeouts[1] = setTimeout(setAtkCharged,300)
+		}
+		function atkEnd(){
+			clearTimeout(atkTimeouts[1])
+			clearTimeout(atkTimeouts[2])
+			clearTimeout(atkTimeouts[3])
+			if (atkNotBusy && !atkCharged){
+				console.log(Math.round(char.stats[1] * (char.talentVal[0][0][char.atkState])/100 * 0.5 * 0.9))
+				atkNotBusy = false
+				atkInterval = setTimeout(setAtkNotBusy,400)
+				char.atkState = (char.atkState + 1) % 4
+				clearTimeout(atkTimeouts[0])
+				atkTimeouts[0] = setTimeout(char.clearAtkState,2000)
+			} else if (atkNotBusy){
+				if (atkStatus[3]){
+					console.log(Math.round(char.stats[1] * (char.talentVal[0][1][2] + char.talentVal[0][1][3]*4)/100 * (100+char.stats[11])/100 * 0.5 * 0.9))
+				} else if (fullCharged){
+					console.log(Math.round(char.stats[1] * (char.talentVal[0][1][1])/100 * (100+char.stats[11])/100 * 0.5 * 0.9))
+				} else {
+					console.log(Math.round(char.stats[1] * (char.talentVal[0][1][0])/100 * 0.5 * 0.9))
+				}
+				atkCharged = false; fullCharged = false;
+				atkInterval = setTimeout(setAtkNotBusy,300)
+				clearTimeout(atkTimeouts[0])
+				atkTimeouts[0] = setTimeout(char.clearAtkState,300)
+			}
+		}
+		function skill(){
+			console.log(Math.round(char.stats[1] * (char.talentVal[1][0])/100 * (100+char.stats[11])/100 * 0.5 * 0.9))
+		}
+		function burst(){
+			console.log(Math.round(char.stats[1] * (char.talentVal[2][0] + char.talentVal[2][1])*6/100 * (100+char.stats[11])/100 * 0.5 * 0.9))
+		}
+
+		char.setBaseStats()
+		char.setStats()
+	</script>
+</html>
