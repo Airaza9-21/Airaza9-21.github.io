@@ -22,6 +22,7 @@
 				background-color: #45a359;
 				border-radius: 12pt;
 				justify-content: center;
+				align-items: center;
 			}
 			button.arrow {
 				width: 14pt; height: 14pt;
@@ -33,10 +34,12 @@
 			#hpbar {
 				width: 240pt; height: 8pt;
 				background-color: #555;
+				border-radius: 4pt;
+				overflow: hidden;
 			}
 			#hpbar-value {
 				width: 100%; height: 100%;
-				background-color: green;
+				background-color: red;
 			}
 		</style>
 	</head>
@@ -64,8 +67,8 @@
 				</div>
 			</div>
 			<div class="buttons-container row">
-				<div class="button row" id="atk" onmousedown="atkStart()" onmouseup="atkEnd()">1</div>
-				<div class="button row" id="skill" onmousedown="skillStart()" onmouseup="skillEnd()">2</div>
+				<div class="button row" id="atk" onmousedown="attackStart()" onmouseup="attackEnd()">ATK</div>
+				<div class="button row" id="button-skill" onmousedown="skillStart()" onmouseup="skillEnd()">SKILL</div>
 				<div class="button row" id="burst" onclick="burst()">3</div>
 			</div>
 		</div>
@@ -73,6 +76,7 @@
 	<script type="text/javascript">
 
 		let c,d;
+		var displayTimeout = []
 
 		function sum(array){
 			out = 0
@@ -199,12 +203,87 @@
 				[[9,20],[0,0]],				//  9 Scholar
 				[[4,18],[20,35]],			// 10 Gladiator's Finale
 				[[6,80],[21,35]]			// 11 Wanderer's Troupe
+			],
+			reaction: [
+				17.165605, 18.535048, 19.904854, 21.274903, 22.6454, 24.649613, 26.640643, 28.868587, 31.367679, 34.143343, 37.201, 40.66, 44.446668, 48.563519, 53.74848, 59.081897, 64.420047, 69.724455, 75.123137, 80.584775, 86.112028, 91.703742, 97.244628, 102.812644, 108.409563, 113.201694, 118.102906, 122.979318, 129.72733, 136.29291, 142.67085, 149.029029, 155.416987, 161.825495, 169.106313, 176.518077, 184.072741, 191.709518, 199.556908, 207.382042, 215.3989, 224.165667, 233.50216, 243.350573, 256.063067, 268.543493, 281.526075, 295.013648, 309.067188, 323.601597, 336.757542, 350.530312, 364.482705, 378.619181, 398.600417, 416.398254, 434.386996, 452.951051, 472.606217, 492.88489, 513.568543, 539.103198, 565.510563, 592.538753, 624.443427, 651.470148, 679.49683, 707.79406, 736.671422, 765.640231, 794.773403, 824.677397, 851.157781, 877.74209, 914.229123, 946.746752, 979.411386, 1011.223022, 1044.791746, 1077.443668, 1109.99754, 1142.976615, 1176.369483, 1210.184393, 1253.835659, 1288.952801, 1325.484092, 1363.456928, 1405.097377, 1446.853458, 1488.215547, 1528.444567, 1580.367911, 1630.847528, 1711.197785, 1780.453941, 1847.322809, 1911.474309, 1972.864342, 2030.071808
 			]
-
 		}
 
 		element = ["Pyro", "Hydro", "Anemo", "Electro", "Dendro", "Cryo", "Geo", "Physical"]
 		artLabel = ["HP", "ATK", "DEF", "HP%", "ATK%", "DEF%", "EM", "CR", "CD", "ER"]
+
+		function reaction(target,type){
+			output = 0
+			em = activeChar.stats[3]
+			function transformative(multiplier){
+				output = scale.reaction[activeChar.level-1]*multiplier*(1 + 16 * (em / (em + 2000)))
+			}
+			function amplifying(multiplier){
+				output = multiplier * (1 + 2.78 * (em / (em + 1400)))
+			}
+			switch(type){
+				case 0:
+					if (target.aura[3]){target.aura[3] = 0; transformative(2); console.log("Overloaded")} else
+					if (target.aura[2]){target.aura[2] = 0; transformative(0.6); console.log("Swirl")} else
+					if (target.aura[1]){target.aura[1] = 0; amplifying(1.5); console.log("Vaporize")} else
+					if (target.aura[5]){target.aura[5] = 0; amplifying(2); console.log("Melt")} else
+					if (target.aura[4]){target.aura[4] = 0; transformative(0.25); console.log("Burning")} else
+					{target.aura[type] = 1}
+					break;
+				case 1:
+					if (target.aura[0]){target.aura[0] = 0; amplifying(2); console.log("Vaporize")} else
+					if (target.aura[2]){target.aura[2] = 0; transformative(0.6); console.log("Swirl")} else
+					if (target.aura[5]){target.aura[5] = 0; target.aura[7] = 1; console.log("Frozen")} else
+					if (target.aura[4]){target.aura[4] = 0; transformative(2); console.log("Bloom")} else
+					if (target.aura[3]){target.aura[3] = 0; transformative(1.2); console.log("Electro-Charged")} else
+					{target.aura[type] = 1}
+					break;
+				case 2:
+					if (target.aura[3]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Electro")} else
+					if (target.aura[0]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Pyro")} else
+					if (target.aura[1]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Hydro")} else
+					if (target.aura[5]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Cryo")} else
+					if (target.aura[7]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Frozen")}
+					break;
+				case 3:
+					if (target.aura[8]){target.aura[8] = 0; console.log("Aggravate")} else
+					if (target.aura[0]){target.aura[0] = 0; transformative(2); console.log("Overloaded")} else
+					if (target.aura[2]){target.aura[2] = 0; transformative(0.6); console.log("Swirl")} else
+					if (target.aura[1]){target.aura[1] = 0; transformative(1.2); console.log("Electro-Charged")} else
+					if (target.aura[5]){target.aura[5] = 0; transformative(0.5); console.log("Superconduct-Cryo")} else
+					if (target.aura[7]){target.aura[7] = 0; transformative(0.5); console.log("Superconduct-Frozen")} else
+					if (target.aura[4]){target.aura[4] = 0; target.aura[8] = 1; console.log("Quicken")} else
+					{target.aura[type] = 1}
+					break;
+				case 4:
+					if (target.aura[8]){target.aura[8] = 0; console.log("Spread")} else
+					if (target.aura[3]){target.aura[3] = 0; target.aura[8] = 1; console.log("Quicken")} else
+					if (target.aura[0]){target.aura[0] = 0; transformative(0.25); console.log("Burning")} else
+					if (target.aura[1]){target.aura[1] = 0; console.log("Bloom")} else
+					{target.aura[type] = 1}
+					break;
+				case 5:
+					if (target.aura[3]){target.aura[3] = 0; transformative(0.5); console.log("Superconduct")} else
+					if (target.aura[0]){target.aura[0] = 0; amplifying(1.5); console.log("Melt")} else
+					if (target.aura[2]){target.aura[2] = 0; transformative(0.6); console.log("Swirl")} else
+					if (target.aura[1]){target.aura[1] = 0; target.aura[7] = 1; console.log("Frozen")} else
+					{target.aura[type] = 1}
+					break;
+				case 6:
+					if (target.aura[7]){target.aura[7] = 0; transformative(1.5); console.log("Shattered")} else
+					if (target.aura[3]){target.aura[3] = 0; console.log("Crystalize-Electro")} else
+					if (target.aura[0]){target.aura[0] = 0; console.log("Crystalize-Pyro")} else
+					if (target.aura[1]){target.aura[1] = 0; console.log("Crystalize-Hydro")} else
+					if (target.aura[5]){target.aura[5] = 0; console.log("Crystalize-Cryo")} else
+					if (target.aura[7]){target.aura[7] = 0; console.log("Crystalize-Frozen")}
+					break;
+				case 10:
+					if (target.aura[7]){target.aura[7] = 0; target.aura[type] = 0; transformative(1.5); console.log("Shattered")}
+					break;
+			}
+
+			return Math.round(output);
+		}
 /*
 		let char = {}
 		function loadJSON(){
@@ -220,26 +299,57 @@
 		let chara = Array(4)
 		chara[0] = {
 			level: 70,
-			vision: 2,
-			stats: [20000,1500,800,200,60,100,100],
+			vision: 0,
+			weapon: [0],
+			stats: [20000,1900,800,200,60,100,100],
 			dmgBonus: [0,0,46.6,0,0,0,0,0],
-			talentVal: [
+			talent: [
 				[  44.98,  45.24, [25.80,  30.96],  60.72,  [25.37,  25.37,  25.37]],
-				[  43.00,  74.65],
+				[  68.80,  124.70],
 				[  80.00, 120.00, 135.00],
 				[
-					[ 192.00, 260.80],
-					[  12.00,  16.00]
+					0,
+					[  12.00,  16.00],
+					[ 192.00, 260.80]
 				],
 				[ 262.40, 120.00]
+			],
+			talentVal: [
+				[  44.98,  45.24, [25.80,  30.96],  60.72,  [25.37,  25.37,  25.37]],
+				[  68.80, 124.70],
+				[  80.00, 120.00, 135.00],
+				[
+					0,
+					[  12.00,  16.00],
+					[ 192.00, 260.80]
+				],
+				[ 262.40, 120.00]
+			],
+			chargeTime: [1.5,1.5],
+			skillTime: [0.35,0.5],
+			timeout: [
+				Array(8)
+			],
+			status: [
+				[0,false,false]
 			]
 		}
 
 		chara[1] = {
 			level: 80,
 			vision: 0,
-			stats: [20000,1500,800,200,60,100,100],
+			weapon: [3],
+			stats: [20000,2000,800,200,60,100,100],
 			dmgBonus: [46.6,0,0,0,0,0,0,0],
+			talent: [
+				[  89.70,  87.63,  98.81, 133.99],
+				[  46.00, 124.00],
+				[  80.00, 120.00, 135.00],
+				[
+					[  94.40,  97.60, 128.80]
+				],
+				[ 262.40, 120.00]
+			],
 			talentVal: [
 				[  89.70,  87.63,  98.81, 133.99],
 				[  46.00, 124.00],
@@ -248,6 +358,96 @@
 					[  94.40,  97.60, 128.80]
 				],
 				[ 262.40, 120.00]
+			],
+			chargeTime: [1.5,1.5],
+			timeout: [
+				Array(8)
+			],
+			status: [
+				[0,false,false]
+			]
+		}
+
+		chara[2] = {
+			level: 80,
+			vision: 1,
+			weapon: [4],
+			stats: [20000,2000,800,200,60,100,100],
+			dmgBonus: [46.6,0,0,0,0,0,0,0],
+			talent: [
+				[  89.70,  87.63,  98.81, 133.99],
+				[  46.00, 124.00],
+				[  80.00, 120.00, 135.00],
+				[
+					0.00, [32.00], 132.80
+				],
+				[ 262.40, 120.00]
+			],
+			talentVal: [
+				[  89.70,  87.63,  98.81, 133.99],
+				[  46.00, 124.00],
+				[  80.00, 120.00, 135.00],
+				[
+					0.00, [ 32.00], 132.80
+				],
+				[ 262.40, 120.00]
+			],
+			chargeTime: [0.5,5],
+			timeout: [
+				Array(8),
+				Array(3),
+				Array(3),
+				Array(2)
+			],
+			status: [
+				[0,false,false]
+			],
+			field: [
+				6,
+				[[1,2],[2,1]],
+				[false,true]
+			]
+		}
+
+		chara[3] = {
+			level: 80,
+			vision: 2,
+			weapon: [4],
+			stats: [20000,2000,800,200,60,100,100],
+			dmgBonus: [0,0,46.6,0,0,0,0,0],
+			talent: [
+				[  37.47,  36.85,  51.06, [14.78,  16.26,  19.22], 61.45],
+				[  73.00],
+				[  80.00, 120.00, 135.00],
+				[
+					   0.00,   0.00, 227.52,
+					[ 56.88, 113.76]
+				],
+				[ 262.40, 120.00]
+			],
+			talentVal: [
+				[  89.70,  87.63,  98.81, 133.99],
+				[  46.00, 124.00],
+				[  80.00, 120.00, 135.00],
+				[
+					0.00, [ 32.00], 132.80
+				],
+				[ 262.40, 120.00]
+			],
+			chargeTime: [0.5,5],
+			timeout: [
+				Array(8),
+				Array(3),
+				Array(3),
+				Array(2)
+			],
+			status: [
+				[0,false,false]
+			],
+			field: [
+				6,
+				[[1,2],[2,1]],
+				[false,true]
 			]
 		}
 
@@ -257,7 +457,8 @@
 			maxHp: Math.round(95.088*1440.909),
 			hp: Math.round(95.088*1440.909),
 			atk: Math.round(62.8*132.59346),
-			res: [10,10,10,10,10,10,10,10]
+			res: [10,10,10,10,10,10,10,50],
+			aura: [0,0,0,0,0,0,0,0,0]
 		}
 
 		function showEnemyHp(){
@@ -265,12 +466,28 @@
 		}
 		showEnemyHp()
 
-		function dmgCalculate(index,type){
-			if (index[0] == 1){
-				talent = activeChar.talentVal[index[0]]
+		function dmgCalculate(index,character,isPhysical){
+			talent = character.talentVal[index[0]]
+
+			if (index[1] >= talent.length){
+				talent = talent[talent.length-1]
 			} else {
-				talent = activeChar.talentVal[index[0]][index[1]]
+				talent = talent[index[1]]
 			}
+/*
+			if (talent.length){
+				talent = character.talentVal[index[0]][index[1]][index[2]]
+			}
+*/
+			if (index[2] >= talent.length){
+				talent = talent[talent.length-1]
+			} else if (talent.length && index[2]){
+				talent = talent[index[2]]
+			} else if (talent.length && !index[2]){
+				talent = talent[0]
+			}
+
+			/*
 			if (talent.length && index[0] == 0){
 				talent = talent[index[2]]
 			}
@@ -278,11 +495,36 @@
 				talent = talent[talent.length-1]
 			} else if (index[0] > 0){
 				talent = talent[index[2]]
+			}*/
+
+			if (isPhysical && character.weapon[0] != 4){
+				type = 7
+			} else {
+				type = character.vision
 			}
+
 			base = activeChar.stats[1] * talent / 100
 			bonus = (100+activeChar.dmgBonus[type])/100
 			def = (activeChar.level + 100) / (activeChar.level + enemy.level + 200)
-			dmg = base * bonus * def * (100-enemy.res[7])/100 * (100 + crit() * activeChar.stats[5])/100
+			if (enemy.res[type] < 0){
+				res = (100 - enemy.res[type] / 2) / 100
+			} else if(enemy.res[type] >= 75){
+				res = (1/(4*res+100)/100)
+			} else {
+				res = (100 - enemy.res[type]) / 100
+			}
+			dmg = base * bonus * def * res * (100 + crit() * activeChar.stats[5])/100
+
+			//enemy.aura[type] = 1
+			react = reaction(enemy,type)
+
+			if (react > 10){
+				console.log(react)
+				enemy.hp -= react
+			} else if (react) {
+				dmg = dmg * react
+			}
+
 			//console.log(base)
 			console.log(Math.round(dmg))
 			enemy.hp -= Math.round(dmg)
@@ -298,133 +540,186 @@
 			}
 		}
 
-		activeChar = chara[1]
-
-		var fieldTimeout = [6,0]
-		const fieldInfusion = true
-		const fieldDoT = [1]
-
-		function fieldStart(){
-			fieldTimeout[0] = setTimeout(function(){fieldEnd()},fieldTimeout[0]*1000)
-			if (fieldDoT){fieldEffect(1)}
-			console.log("Field Created")
+		activeChar = chara[0]
+		function activeCharChange(targetIndex){
+			if (activeChar != chara[targetIndex]){
+				activeChar.status[0] = [0,false,false]
+				activeChar = chara[targetIndex]
+			}
+			console.log("Char-"+targetIndex)
 		}
-		function fieldEffect(type){
-			if (type == 1){
-				fieldTimeout[1] = setTimeout(function(){console.log("Field DoT"); fieldEffect(1)},fieldDoT[0]*1000)
+
+		var fieldTimeout = [6,[]]
+		const startDmg = true
+		const effect = [[0,2],[1,1]]
+		const expireDmg = true
+
+		function fieldStart(character){
+			character.timeout[3][0] = setTimeout(function(){fieldEnd(character)},character.field[0]*1000)
+			if(effect != 0){
+				character.timeout[3][1] = Array(character.field[1].length)
+				character.field[1].forEach(function(el,ind){
+					fieldEffect(ind,character)
+				})
+			}
+			console.log("Field Created")
+			if (character.field[2][0]){
+				dmgCalculate([3,0],character,false)
 			}
 		}
-		function fieldEnd(){
-			clearTimeout(fieldTimeout[0])
-			clearTimeout(fieldTimeout[1])
-			console.log("Field Ended")
+		function fieldEffect(id,character){
+			switch(effect[id][0]){
+				case 0:
+					console.log("Field DoT")
+					dmgCalculate([3,1,id],chara[2],false)
+					character.timeout[3][1][id] = setTimeout(function(){
+						fieldEffect(id,character)
+					},effect[id][1]*1000)
+					break;
+				case 1:
+					console.log("Field HoT")
+					character.timeout[3][1][id] = setTimeout(function(){
+						fieldEffect(id,character)
+					},effect[id][1]*1000)
+					break;
+				case 2:
+					console.log("Field Infusion")
+					character.timeout[3][1][id] = setTimeout(function(){
+						fieldEffect(id,character)
+					},effect[id][1]*1000)
+				case 3:
+					console.log("Field Buff")
+					character.timeout[3][1][id] = setTimeout(function(){
+						fieldEffect(id,character)
+					},effect[id][1]*1000)
+			}
 		}
-
+		function fieldEnd(character){
+			clearTimeout(character.timeout[3][0])
+			character.timeout[3][1].forEach(function(el){
+				clearTimeout(el)
+			})
+			console.log("Field Ended")
+			if (character.field[2][1]){
+				dmgCalculate([3,2],character,false)
+			}
+		}
+/*
 		var infusion = 8
 		var attackState = 0
 		var attackBusy = false
 		var attackCharged = false
 		var attackTimeout = [0,0,0,0,0,0,0,0] //interval, timeout, multistrike-1,2,3, chargeTrigger, chargeTime, chargeExpire
 		//const basic = [1,2,[31,32],4,[51,52,53]]
-		const basic = [1,2,3,4]
-		const chargeSlash = 2
-		const interval = [0.4,0.3,0.5,1]
+		//const basic = [1,2,3,4]
+		const interval = [0.4,0.3,0.5,0.4,1]
 		const chargeTime = [1.5,1.5]
-		const weapon = 3
-
+		const weapon = 3*/
 		function attackStart(){
-			attackTimeout[5] = setTimeout(function(){
-				if (weapon == 1){
-					attackTimeout[7] = setTimeout(function(){attackEnd()},5000)
-				} else if (weapon == 3){
-					clearTimeout(attackTimeout[1])
-					attackState = 0
+			activeChar.timeout[0][5] = setTimeout(function(){
+				if (activeChar.weapon[0] == 1){
+					activeChar.timeout[0][7] = setTimeout(function(){attackEnd()},5000)
+				} else if (activeChar.weapon[0] == 3){
+					clearTimeout(activeChar.timeout[0][1])
+					activeChar.status[0][0] = 0
 				}
-				attackCharged = true; attackState = 0; attack();
+				activeChar.status[0][2] = true; activeChar.status[0][0] = 0; attack();
 			},400)
 		}
 		function attack(){
-			if (attackCharged){
-				if (weapon == 1){
-					attackTimeout[6] = setTimeout(function(){
+			if (activeChar.status[0][2]){
+				if (activeChar.weapon[0] == 1){
+					activeChar.timeout[0][6] = setTimeout(function(){
 						console.log("Charge Spin")
+						dmgCalculate([1,0],activeChar,true)
 						attack()
-					}, 800);
-				} else if (weapon == 3){
-					attackTimeout[6] = setTimeout(function(){
+					}, activeChar.chargeTime[0]*1000);
+				} else if (activeChar.weapon[0] == 3){
+					activeChar.timeout[0][6] = setTimeout(function(){
 						console.log("Arrow Charged")
-						attackState += 1
-						if (attackState < chargeTime.length){attack()}
-					},chargeTime[attackState]*1000)
+						activeChar.status[0][0] += 1
+						if (activeChar.status[0][0] < activeChar.chargeTime.length){attack()}
+					},activeChar.chargeTime[activeChar.status[0][0]]*1000)
 				} else {
 					console.log("Charged Attack")
-					if (weapon == 0 && activeChar.talentVal[1].length > 1){
+					if (activeChar.weapon[0] == 0 && activeChar.talentVal[1].length > 1){
 						activeChar.talentVal[1].forEach(function(el,ind,arr){
-							attackTimeout[ind+2] = setTimeout(function(){
-								console.log("Charge Slash-"+attackState)
-								dmgCalculate([1,attackState],7)
-								attackState++
+							activeChar.timeout[0][ind+2] = setTimeout(function(){
+								console.log("Charge Slash-"+activeChar.status[0][0])
+								dmgCalculate([1,activeChar.status[0][0]],activeChar,true)
+								activeChar.status[0][0]++
 							}, 50*ind)
 						})
 					}
 				}
 			} else {
-				if (basic[attackState].length){
-					basic[attackState].forEach(function(el,ind,arr){
-						attackTimeout[ind+2] = setTimeout(function(){
-							console.log("Normal Attack Hit-"+basic[attackState][ind])
-							dmgCalculate([0,attackState,ind],7)
-							attackState = (attackState + Math.floor((ind+1)/basic[attackState].length)) % basic.length
+				basic = activeChar.talent[0]
+				if (basic[activeChar.status[0][0]].length){
+					basic[activeChar.status[0][0]].forEach(function(el,ind,arr){
+						activeChar.timeout[0][ind+2] = setTimeout(function(){
+							console.log("Normal Attack Hit-"+activeChar.status[0][0])
+							dmgCalculate([0,activeChar.status[0][0],ind],activeChar,true)
+							activeChar.status[0][0] = (activeChar.status[0][0] + Math.floor((ind+1)/arr.length)) % basic.length
 						}, 50*ind);
 					})
-					//attackTimeout[5] = setTimeout(function(){}, 100*(basic[attackState].length));
+					//activeChar.timeout[0][5] = setTimeout(function(){}, 100*(arrlength));
 				} else {
-					console.log("Normal Attack Hit-"+basic[attackState])
-					dmgCalculate([0,attackState],7)
-					attackState = (attackState + 1) % basic.length
+					console.log("Normal Attack Hit-"+activeChar.status[0][0])
+					dmgCalculate([0,activeChar.status[0][0]],activeChar,true)
+					activeChar.status[0][0] = (activeChar.status[0][0] + 1) % basic.length
 				}
 			}
-			if (infusion !=8){console.log(element[infusion])}
 		}
 		function attackEnd(){
-			clearTimeout(attackTimeout[5])
-			if (!attackBusy && !attackCharged){
-				clearTimeout(attackTimeout[0])
-				clearTimeout(attackTimeout[1])
-				attackBusy = true
-				attackTimeout[0] = setTimeout(function(){attackBusy = false},interval[attackState]*1000)
-				attackTimeout[1] = setTimeout(function(){attackState = 0},(interval[attackState]+1)*1000)
+			clearTimeout(activeChar.timeout[0][5])
+			if (!activeChar.status[0][1] && !activeChar.status[0][2]){
+				clearTimeout(activeChar.timeout[0][0])
+				clearTimeout(activeChar.timeout[0][1])
+				activeChar.status[0][1] = true
+				t = 0.4+0.6*Math.floor(activeChar.status[0][0]/(activeChar.talent[0].length-1))
+				activeChar.timeout[0][0] = setTimeout(function(){activeChar.status[0][1] = false},t*1000)
+				activeChar.timeout[0][1] = setTimeout(function(){activeChar.status[0][0] = 0},(t+1)*1000)
 				attack()
-			} else if (!attackBusy && attackCharged){
-				clearTimeout(attackTimeout[6])
-				if (weapon == 1){
-					attackTimeout[6] = setTimeout(function(){console.log("Charge Final")}, 500);
-					attackBusy = true
-				} else if (weapon == 3) {
-					console.log("Aim Attack Level-"+attackState)
-					dmgCalculate([1,0,attackState],activeChar.vision)
+			} else if (!activeChar.status[0][1] && activeChar.status[0][2]){
+				clearTimeout(activeChar.timeout[0][6])
+				if (activeChar.weapon[0] == 1){
+					activeChar.timeout[0][6] = setTimeout(function(){
+						console.log("Charge Final")
+						dmgCalculate([1,1],activeChar,true)
+					}, 500);
+					activeChar.status[0][1] = true
+				} else if (activeChar.weapon[0] == 3) {
+					console.log("Aim Attack Level-"+activeChar.status[0][0])
+					isPhysical = true
+					if (activeChar.status[0][0]){
+						isPhysical = false
+					}
+					dmgCalculate([1,activeChar.status[0][0]],activeChar,false)
 				}
-				attackState = 0
+				activeChar.status[0][0] = 0
 			}
-			if (weapon == 1 && !attackCharged){
-				attackBusy = false
+			if (activeChar.weapon[0] == 1 && !activeChar.status[0][2]){
+				activeChar.status[0][1] = false
 			}
-			attackCharged = false
+			activeChar.status[0][2] = false
 		}
 
+		//[]
 		var skillOnCD = false
 		var skillHold = false
 		var skillCharge = 0
 		var skillTimeout = [0,0,0,0,[]]
-		var skillExecuted = 0
-		const holdable = 0
+		var skillExecuted = false
+		//skill = [1,3,[5,8],true] // holdable, chargable, CD, skillField
+		const holdable = 1
 		const chargable = 3
 		const autoEnd = 1
-		const skillChargeTime = [0.5]
+		const skillTime = [0.4,1]
 		const holdDmg = [0.35,0.5]
 		const cooldown = [5,8]
-		const sequence = 3
-
+		const sequence = 0
+		const skillField = false
+/*
 		function skillStart(){
 			if (!skillOnCD){
 				if (holdable){
@@ -517,6 +812,96 @@
 					break;
 			}
 		}
+*/
+
+		function skillStart(){
+			if (skillOnCD){
+				skillExecuted = true
+			} else {
+				if (holdable == 1){
+					skillTimeout[0] = setTimeout(function(){skillHold = true; skill()},200)
+				} else {
+					skill()
+				}
+			}
+		}
+		function skill(){
+			if (skillHold){
+				if (skillCharge < chargable && !skillExecuted){
+					if (activeChar.talent[3][1].length){
+						activeChar.talent[3][1].forEach(function(el,ind){
+							skillTimeout[4][ind] = setTimeout(function(){dmgCalculate([3,1,skillCharge],activeChar,false)},activeChar.skillTime[ind]*1000)
+						})
+					}
+					skillTimeout[1] = setTimeout(function(){
+						console.log("Charge Level-"+skillCharge)
+						dmgCalculate([3,2,skillCharge],activeChar,false)
+						skillCharge += 1
+						skill()
+					},skillTime[1]*1000)
+				} else {
+					skillExecuted = true
+					console.log("Hold Level-"+skillCharge)
+					setSkillCD()
+					skillCharge = 0
+				}
+			} else {
+				if (holdable == 2){
+					clearTimeout(skillTimeout[2])
+					skillCharge += 1
+					console.log("Press Sequence-"+skillCharge)
+					dmgCalculate([3,skillCharge],activeChar,false)
+					if (skillCharge < chargable){
+						skillTimeout[2] = setTimeout(function(){
+							skillCharge = 0
+							setSkillCD()
+						},5000)
+					} else {
+						skillCharge = 0
+						setSkillCD()
+					}
+				} else {
+					console.log("Press")
+					if (skillField){
+						fieldStart(chara[2])
+					} else {
+						if (holdable){
+							dmgCalculate([3,2],activeChar)
+						} else {
+							dmgCalculate([3,0],activeChar,false)
+						}
+					}
+					setSkillCD()
+				}
+				
+			}
+		}
+		function skillEnd(){
+			clearTimeout(skillTimeout[0])
+			clearTimeout(skillTimeout[1])
+			if (!skillExecuted){
+				if (holdable == 1 && !skillHold){
+					skill()
+				} else if (holdable == 1 && skillHold && !skillExecuted){
+					skillExecuted = true
+					skill()
+				}
+			}
+			skillHold = false
+			skillExecuted = false
+		}
+		function setSkillCD(){
+			console.log("CD set")
+			skillOnCD = true
+			if (cooldown.length <= skillCharge){
+				cd = cooldown[cooldown.length-1]
+			} else {
+				cd = cooldown[skillCharge]
+			}
+			skillTimeout[3] = setTimeout(function(){skillOnCD = false; console.log("Skill Ready!")},cd*1000)
+			document.getElementById("button-skill").innerHTML = cd
+			refreshDisplayTimeout(1,cd)
+		}
 
 		function burst(){
 			dmg = char.stats[1] * (100 + char.stats[11] + char.bonusStats[19] + char.bonusStats[23])/100 * 0.5 * 0.9
@@ -532,6 +917,18 @@
 			console.log(sum(total))
 		}
 
+		function refreshDisplayTimeout(type,cd){
+			num = Number(document.getElementById("button-skill").innerHTML)
+			if (num > 0){
+				displayTimeout[1] = setTimeout(function(){
+					document.getElementById("button-skill").innerHTML = (num*10 - 1)/10
+					refreshDisplayTimeout(1,cd)
+				},100)
+			} else {
+				document.getElementById("button-skill").innerHTML = "SKILL"
+			}
+		}
+
 		var keyHold = false
 
 		window.addEventListener("keydown",function(e){
@@ -540,6 +937,8 @@
 					attackStart()
 				} else if (e.keyCode == 69){
 					skillStart()
+				} else if (e.keyCode > 48 && e.keyCode < 53){
+					activeCharChange(e.keyCode-49)
 				}
 				keyHold = true
 			}
@@ -554,6 +953,9 @@
 			}
 			keyHold = false
 		})
+
+		activeChar.talentVal[1][0] = activeChar.talent[1][0]*scale.talent[0][6]
+		activeChar.talentVal[1][1] = activeChar.talent[1][1]*scale.talent[0][6]
 
 		//char.setBaseStats()
 		//char.setStats()
