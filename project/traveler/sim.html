@@ -84,6 +84,14 @@
 			return out
 		}
 
+		function over(x,y){
+			if (x >= y.length){
+				return y[y.length-1]
+			} else {
+				return y[x]
+			}
+		}
+
 		function change(val,id,obj){
 			if(val){
 				doc = document.getElementById(id+"-num")
@@ -240,10 +248,10 @@
 					break;
 				case 2:
 					if (target.aura[3]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Electro")} else
-					if (target.aura[0]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Pyro")} else
-					if (target.aura[1]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Hydro")} else
-					if (target.aura[5]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Cryo")} else
-					if (target.aura[7]){target.aura[3] = 0; transformative(0.6); console.log("Swirl-Frozen")}
+					if (target.aura[0]){target.aura[0] = 0; transformative(0.6); console.log("Swirl-Pyro")} else
+					if (target.aura[1]){target.aura[1] = 0; transformative(0.6); console.log("Swirl-Hydro")} else
+					if (target.aura[5]){target.aura[5] = 0; transformative(0.6); console.log("Swirl-Cryo")} else
+					if (target.aura[7]){target.aura[7] = 0; transformative(0.6); console.log("Swirl-Frozen")}
 					break;
 				case 3:
 					if (target.aura[8]){target.aura[8] = 0; console.log("Aggravate")} else
@@ -299,7 +307,7 @@
 		let chara = Array(4)
 		chara[0] = {
 			level: 70,
-			vision: 0,
+			vision: 2,
 			weapon: [0],
 			stats: [20000,1900,800,200,60,100,100],
 			dmgBonus: [0,0,46.6,0,0,0,0,0],
@@ -314,31 +322,24 @@
 				],
 				[ 262.40, 120.00]
 			],
-			talentVal: [
-				[  44.98,  45.24, [25.80,  30.96],  60.72,  [25.37,  25.37,  25.37]],
-				[  68.80, 124.70],
-				[  80.00, 120.00, 135.00],
-				[
-					0,
-					[  12.00,  16.00],
-					[ 192.00, 260.80]
-				],
-				[ 262.40, 120.00]
-			],
+			talentLevel: [6,6,6],
 			chargeTime: [1.5,1.5],
-			skillTime: [0.35,0.5],
+			skillTime: [[0.5],[0.35,0.5]],
+			skill: [1,3,[5,8]], // holdable, chargable, CD
 			timeout: [
-				Array(8)
+				Array(8),
+				[0,0,0,0,[]]
 			],
 			status: [
-				[0,false,false]
+				[0,false,false],
+				[false,false,0,false] // skillOnCD, skillHold, skillCharge, skillExecuted
 			]
 		}
 
 		chara[1] = {
 			level: 80,
 			vision: 0,
-			weapon: [3],
+			weapon: [1],
 			stats: [20000,2000,800,200,60,100,100],
 			dmgBonus: [46.6,0,0,0,0,0,0,0],
 			talent: [
@@ -350,21 +351,17 @@
 				],
 				[ 262.40, 120.00]
 			],
-			talentVal: [
-				[  89.70,  87.63,  98.81, 133.99],
-				[  46.00, 124.00],
-				[  80.00, 120.00, 135.00],
-				[
-					[  94.40,  97.60, 128.80]
-				],
-				[ 262.40, 120.00]
-			],
-			chargeTime: [1.5,1.5],
+			talentLevel: [6,6,6],
+			chargeTime: [0.6,1.5],
+			skillTime: 0,
+			skill: [2,3,[7]],
 			timeout: [
-				Array(8)
+				Array(8),
+				[0,0,0,0,[]]
 			],
 			status: [
-				[0,false,false]
+				[0,false,false],
+				[false,false,0,false] // skillOnCD, skillHold, skillCharge, skillExecuted
 			]
 		}
 
@@ -383,27 +380,20 @@
 				],
 				[ 262.40, 120.00]
 			],
-			talentVal: [
-				[  89.70,  87.63,  98.81, 133.99],
-				[  46.00, 124.00],
-				[  80.00, 120.00, 135.00],
-				[
-					0.00, [ 32.00], 132.80
-				],
-				[ 262.40, 120.00]
-			],
+			talentLevel: [6,6,6],
 			chargeTime: [0.5,5],
+			skillTime: 0,
+			skill: [0,0,[18]],
 			timeout: [
 				Array(8),
-				Array(3),
-				Array(3),
-				Array(2)
+				[0,0,0,0,[]]
 			],
 			status: [
-				[0,false,false]
+				[0,false,false],
+				[false,false,0,false] // skillOnCD, skillHold, skillCharge, skillExecuted
 			],
 			field: [
-				6,
+				10,
 				[[1,2],[2,1]],
 				[false,true]
 			]
@@ -425,30 +415,30 @@
 				],
 				[ 262.40, 120.00]
 			],
-			talentVal: [
-				[  89.70,  87.63,  98.81, 133.99],
-				[  46.00, 124.00],
-				[  80.00, 120.00, 135.00],
-				[
-					0.00, [ 32.00], 132.80
-				],
-				[ 262.40, 120.00]
-			],
+			talentLevel: [6,6,6],
 			chargeTime: [0.5,5],
+			skillTime: [[1.5]],
+			skill: [1,4,[15],[0,1,4]],
 			timeout: [
 				Array(8),
-				Array(3),
-				Array(3),
-				Array(2)
+				[0,0,0,0,[]]
 			],
 			status: [
-				[0,false,false]
-			],
-			field: [
-				6,
-				[[1,2],[2,1]],
-				[false,true]
+				[0,false,false],
+				[false,false,0,false] // skillOnCD, skillHold, skillCharge, skillExecuted
 			]
+		}
+
+		function makeJson(base,vision,weapon,t0,t1,t2,t3,t4,CA,sk,field){
+			myChar = {
+				base: base,
+				vision: vision,
+				weapon: [weapon],
+				talent: [t0,t1,t2,t3,t4],
+				chargeTime: CA,
+				skill: sk,
+				field: field
+			}
 		}
 
 
@@ -467,7 +457,23 @@
 		showEnemyHp()
 
 		function dmgCalculate(index,character,isPhysical){
-			talent = character.talentVal[index[0]]
+			bonus = 0
+
+			talent = character.talent[index[0]]
+
+			if (index[0] < 3 && character.weapon != 4){
+				talentMultiplier = scale.talent[0][character.talentLevel[0]]
+			} else {
+				if (index[0] < 3){
+					talentMultiplier = scale.talent[1][character.talentLevel[0]]
+				} else {
+					talentMultiplier = scale.talent[1][character.talentLevel[index[0] - 2]]
+				}
+			}
+
+			if (index[0] == 3 && character.skill[3]){
+				bonus = talent[3][0] * character.status[1][2] * talentMultiplier
+			}
 
 			if (index[1] >= talent.length){
 				talent = talent[talent.length-1]
@@ -487,24 +493,14 @@
 				talent = talent[0]
 			}
 
-			/*
-			if (talent.length && index[0] == 0){
-				talent = talent[index[2]]
-			}
-			if (index[0] > 0 && talent.length <= index[2]){
-				talent = talent[talent.length-1]
-			} else if (index[0] > 0){
-				talent = talent[index[2]]
-			}*/
-
 			if (isPhysical && character.weapon[0] != 4){
 				type = 7
 			} else {
 				type = character.vision
 			}
 
-			base = activeChar.stats[1] * talent / 100
-			bonus = (100+activeChar.dmgBonus[type])/100
+			base = activeChar.stats[1] * (talent * talentMultiplier) / 100
+			bonus = (100+bonus+activeChar.dmgBonus[type])/100
 			def = (activeChar.level + 100) / (activeChar.level + enemy.level + 200)
 			if (enemy.res[type] < 0){
 				res = (100 - enemy.res[type] / 2) / 100
@@ -555,9 +551,9 @@
 		const expireDmg = true
 
 		function fieldStart(character){
-			character.timeout[3][0] = setTimeout(function(){fieldEnd(character)},character.field[0]*1000)
+			character.timeout[1][4][0] = setTimeout(function(){fieldEnd(character)},character.field[0]*1000)
 			if(effect != 0){
-				character.timeout[3][1] = Array(character.field[1].length)
+				character.timeout[1][4][1] = Array(character.field[1].length)
 				character.field[1].forEach(function(el,ind){
 					fieldEffect(ind,character)
 				})
@@ -571,32 +567,32 @@
 			switch(effect[id][0]){
 				case 0:
 					console.log("Field DoT")
-					dmgCalculate([3,1,id],chara[2],false)
-					character.timeout[3][1][id] = setTimeout(function(){
+					dmgCalculate([3,1,id],character,false)
+					character.timeout[1][4][1][id] = setTimeout(function(){
 						fieldEffect(id,character)
 					},effect[id][1]*1000)
 					break;
 				case 1:
 					console.log("Field HoT")
-					character.timeout[3][1][id] = setTimeout(function(){
+					character.timeout[1][4][1][id] = setTimeout(function(){
 						fieldEffect(id,character)
 					},effect[id][1]*1000)
 					break;
 				case 2:
 					console.log("Field Infusion")
-					character.timeout[3][1][id] = setTimeout(function(){
+					character.timeout[1][4][1][id] = setTimeout(function(){
 						fieldEffect(id,character)
 					},effect[id][1]*1000)
 				case 3:
 					console.log("Field Buff")
-					character.timeout[3][1][id] = setTimeout(function(){
+					character.timeout[1][4][1][id] = setTimeout(function(){
 						fieldEffect(id,character)
 					},effect[id][1]*1000)
 			}
 		}
 		function fieldEnd(character){
-			clearTimeout(character.timeout[3][0])
-			character.timeout[3][1].forEach(function(el){
+			clearTimeout(character.timeout[1][4][0])
+			character.timeout[1][4][1].forEach(function(el){
 				clearTimeout(el)
 			})
 			console.log("Field Ended")
@@ -614,7 +610,8 @@
 		//const basic = [1,2,3,4]
 		const interval = [0.4,0.3,0.5,0.4,1]
 		const chargeTime = [1.5,1.5]
-		const weapon = 3*/
+		const weapon = 3
+*/
 		function attackStart(){
 			activeChar.timeout[0][5] = setTimeout(function(){
 				if (activeChar.weapon[0] == 1){
@@ -642,14 +639,16 @@
 					},activeChar.chargeTime[activeChar.status[0][0]]*1000)
 				} else {
 					console.log("Charged Attack")
-					if (activeChar.weapon[0] == 0 && activeChar.talentVal[1].length > 1){
-						activeChar.talentVal[1].forEach(function(el,ind,arr){
+					if (activeChar.weapon[0] == 0 && activeChar.talent[1].length > 1){
+						activeChar.talent[1].forEach(function(el,ind,arr){
 							activeChar.timeout[0][ind+2] = setTimeout(function(){
 								console.log("Charge Slash-"+activeChar.status[0][0])
 								dmgCalculate([1,activeChar.status[0][0]],activeChar,true)
 								activeChar.status[0][0]++
 							}, 50*ind)
 						})
+					} else {
+						dmgCalculate([1,0],activeChar,true)
 					}
 				}
 			} else {
@@ -703,8 +702,8 @@
 			}
 			activeChar.status[0][2] = false
 		}
-
-		//[]
+/*
+		//[false,false,0,false] // skillOnCD, skillHold, skillCharge, skillExecuted
 		var skillOnCD = false
 		var skillHold = false
 		var skillCharge = 0
@@ -719,186 +718,90 @@
 		const cooldown = [5,8]
 		const sequence = 0
 		const skillField = false
-/*
-		function skillStart(){
-			if (!skillOnCD){
-				if (holdable){
-					skillTimeout[1] = setTimeout(function(){skillHold = true; skill(1); console.log("charging")},200)
-				} else {
-					skill(0)
-				}
-			}
-		}
-		function skill(type){
-			if (chargable && type){
-				ct = 0
-				if (skillChargeTime.length != 1){
-					ct = skillCharge
-				}
-				if (holdDmg){
-					holdDmg.forEach(function(el,ind,arr){
-						skillTimeout[4][ind] = setTimeout(function()
-							{console.log("DoT-"+ind)
-							dmgCalculate([3,1,skillCharge],activeChar.vision)
-						},el*1000)
-					})
-				}
-				skillTimeout[2] = setTimeout(function(){
-					skillCharge += 1
-					if (skillCharge != chargable){
-						skill(1)
-						console.log("Charged")
-					} else if (autoEnd) {
-						skillEnd()
-						skillExecuted = 1
-					}
-				},skillChargeTime[ct] * 1000)
-			} else {
-				if (sequence){
-					skillCharge += 1
-				}
-				skillEnd()
-				skillExecuted = 1
-			}
-		}
-		function skillEnd(){
-			if (!skillOnCD){
-				clearTimeout(skillTimeout[1])
-				clearTimeout(skillTimeout[2])
-				clearTimeout(skillTimeout[3])
-				skillTimeout[4].forEach(function(el){
-					clearTimeout(el)
-				})
-
-				if (skillCharge && holdable){
-					console.log("Charge Level " + skillCharge)
-					dmgCalculate([3,0,skillCharge],activeChar.vision)
-					if (cooldown.length == chargable+1){
-						cd = skillCharge
-					} else if (cooldown.length > 1){
-						cd = 1
-					} else {
-						cd = 0
-					}
-				} else if ((chargable || !skillHold) && !skillExecuted){
-					if (sequence){
-						console.log("Skill-"+skillCharge)
-					}
-					console.log("Press")
-					dmgCalculate([3,0,skillCharge],activeChar.vision)
-					//fieldStart()
-					cd = 0
-					//skill(0)
-				}
-				//console.log(cooldown[cd])
-				if (!sequence || sequence == skillCharge){
-					setCD(1,cooldown[cd])
-				} else if (sequence){
-					skillTimeout[3] = setTimeout(function(){setCD(1,cooldown[cd])},5000)
-				}
-			}
-			skillHold = false
-			skillExecuted = false
-		}
-
-		function setCD(type,value){
-			console.log("Cooldown: "+cooldown[cd])
-			val = value*1000
-			switch(type){
-				case 1:
-					skillOnCD = true
-					skillCharge = 0
-					skillTimeout[0] = setTimeout(function(){skillOnCD = false; console.log("Skill Ready!")},val)
-					break;
-			}
-		}
 */
 
 		function skillStart(){
-			if (skillOnCD){
-				skillExecuted = true
+			if (activeChar.status[1][0]){
+				activeChar.status[1][3] = true
 			} else {
-				if (holdable == 1){
-					skillTimeout[0] = setTimeout(function(){skillHold = true; skill()},200)
+				if (activeChar.skill[0] == 1){
+					activeChar.timeout[1][0] = setTimeout(function(){activeChar.status[1][1] = true; skill()},200)
 				} else {
 					skill()
 				}
 			}
 		}
 		function skill(){
-			if (skillHold){
-				if (skillCharge < chargable && !skillExecuted){
+			if (activeChar.status[1][1]){
+				if (activeChar.status[1][2] < activeChar.skill[1] && !activeChar.status[1][3]){
 					if (activeChar.talent[3][1].length){
 						activeChar.talent[3][1].forEach(function(el,ind){
-							skillTimeout[4][ind] = setTimeout(function(){dmgCalculate([3,1,skillCharge],activeChar,false)},activeChar.skillTime[ind]*1000)
+							activeChar.timeout[1][4][ind] = setTimeout(function(){dmgCalculate([3,1,activeChar.status[1][2]],activeChar,false)},activeChar.skillTime[1][ind]*1000)
 						})
 					}
-					skillTimeout[1] = setTimeout(function(){
-						console.log("Charge Level-"+skillCharge)
-						dmgCalculate([3,2,skillCharge],activeChar,false)
-						skillCharge += 1
+					activeChar.timeout[1][1] = setTimeout(function(){
+						console.log("Charge Level-"+activeChar.status[1][2])
+						activeChar.status[1][2] += 1
 						skill()
-					},skillTime[1]*1000)
+					},over(activeChar.status[1][2],activeChar.skillTime[0])*1000)
 				} else {
-					skillExecuted = true
-					console.log("Hold Level-"+skillCharge)
+					activeChar.status[1][3] = true
+					console.log("Hold Level-"+activeChar.status[1][2])
+					dmgCalculate([3,2,activeChar.status[1][2]],activeChar,false)
 					setSkillCD()
-					skillCharge = 0
+					activeChar.status[1][2] = 0
 				}
 			} else {
-				if (holdable == 2){
-					clearTimeout(skillTimeout[2])
-					skillCharge += 1
-					console.log("Press Sequence-"+skillCharge)
-					dmgCalculate([3,skillCharge],activeChar,false)
-					if (skillCharge < chargable){
-						skillTimeout[2] = setTimeout(function(){
-							skillCharge = 0
+				if (activeChar.skill[0] == 2){
+					clearTimeout(activeChar.timeout[1][2])
+					activeChar.status[1][2] += 1
+					console.log("Press Sequence-"+activeChar.status[1][2])
+					dmgCalculate([3,activeChar.status[1][2]],activeChar,false)
+					if (activeChar.status[1][2] < activeChar.skill[1]){
+						activeChar.timeout[1][2] = setTimeout(function(){
+							activeChar.status[1][2] = 0
 							setSkillCD()
 						},5000)
 					} else {
-						skillCharge = 0
+						activeChar.status[1][2] = 0
 						setSkillCD()
 					}
 				} else {
 					console.log("Press")
-					if (skillField){
+					if (activeChar.field){
 						fieldStart(chara[2])
 					} else {
-						if (holdable){
+						if (activeChar.skill[0]){
 							dmgCalculate([3,2],activeChar)
 						} else {
 							dmgCalculate([3,0],activeChar,false)
 						}
 					}
+					activeChar.status[1][2] = 0
 					setSkillCD()
 				}
 				
 			}
 		}
 		function skillEnd(){
-			clearTimeout(skillTimeout[0])
-			clearTimeout(skillTimeout[1])
-			if (!skillExecuted){
-				if (holdable == 1 && !skillHold){
+			clearTimeout(activeChar.timeout[1][0])
+			clearTimeout(activeChar.timeout[1][1])
+			if (!activeChar.status[1][3]){
+				if (activeChar.skill[0] == 1 && !activeChar.skill[1]){
 					skill()
-				} else if (holdable == 1 && skillHold && !skillExecuted){
-					skillExecuted = true
+				} else if (activeChar.skill[0] == 1 && activeChar.skill[1] && !activeChar.status[1][3]){
+					activeChar.status[1][3] = true
 					skill()
 				}
 			}
-			skillHold = false
-			skillExecuted = false
+			activeChar.status[1][1] = false
+			activeChar.status[1][3] = false
 		}
 		function setSkillCD(){
 			console.log("CD set")
-			skillOnCD = true
-			if (cooldown.length <= skillCharge){
-				cd = cooldown[cooldown.length-1]
-			} else {
-				cd = cooldown[skillCharge]
-			}
-			skillTimeout[3] = setTimeout(function(){skillOnCD = false; console.log("Skill Ready!")},cd*1000)
+			activeChar.status[1][0] = true
+			cd = over(activeChar.status[1][2],activeChar.skill[2])
+			activeChar.timeout[1][3] = setTimeout(function(){activeChar.status[1][0] = false; console.log("Skill Ready!")},cd*1000)
 			document.getElementById("button-skill").innerHTML = cd
 			refreshDisplayTimeout(1,cd)
 		}
@@ -908,10 +811,10 @@
 			//console.log(Math.round(char.stats[1] * (char.talentVal[2][0] + char.talentVal[2][1])*6/100 * (100 + char.stats[11] + char.bonusStats[19] + char.bonusStats[23])/100 * 0.5 * 0.9 * (100 + crit())/100))
 			total = []
 			for (c = 0; c < 6; c++){
-				total.push(Math.round(dmg * (char.talentVal[2][0])/100 * (100 + crit())/100))
+				total.push(Math.round(dmg * (char.talent[2][0])/100 * (100 + crit())/100))
 			}
 			for (c = 0; c < 6; c++){
-				total.push(Math.round(dmg * (char.talentVal[2][1])/100 * (100 + crit())/100))
+				total.push(Math.round(dmg * (char.talent[2][1])/100 * (100 + crit())/100))
 			}
 			console.log(total)
 			console.log(sum(total))
@@ -954,8 +857,8 @@
 			keyHold = false
 		})
 
-		activeChar.talentVal[1][0] = activeChar.talent[1][0]*scale.talent[0][6]
-		activeChar.talentVal[1][1] = activeChar.talent[1][1]*scale.talent[0][6]
+		activeChar.talent[1][0] = activeChar.talent[1][0]*scale.talent[0][6]
+		activeChar.talent[1][1] = activeChar.talent[1][1]*scale.talent[0][6]
 
 		//char.setBaseStats()
 		//char.setStats()
