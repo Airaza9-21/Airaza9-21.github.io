@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 	<head>
+		<!--link href="https://fonts.googleapis.com/css2?family=Alkatra&display=swap" rel="stylesheet"-->
 		<style type="text/css">
 			:root {
 				--col-0: #df210d;
@@ -13,10 +14,43 @@
 				--col-7: #fff;
 			}
 
+			.star-3 {
+				background-image: url(https://static.wikia.nocookie.net/gensin-impact/images/2/20/Background_Item_3_Star.png);
+			}
+			.star-4 {
+				background-image: url(https://static.wikia.nocookie.net/gensin-impact/images/e/ec/Background_Item_4_Star.png);
+			}
+			.star-5 {
+				background-image: url(https://static.wikia.nocookie.net/gensin-impact/images/7/76/Background_Item_5_Star.png);
+			}
+
 			* {
 				padding: 0; margin: 0;
 				box-sizing: border-box;
 			}
+
+			body {
+				height: 100vh;
+				background-image: linear-gradient(180deg, #0000b3, #1ba8f7);
+				color: #ffd66d;
+				font-family: Arial;
+			}
+
+			table, tr, td {
+				border-collapse: collapse;
+			}
+
+			input {
+				color: #ffd66d;
+				font-family: Arial;
+			}
+
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
 			.row {
 				display: flex;
 				justify-content: space-evenly;
@@ -33,30 +67,58 @@
 				padding: 12pt;
 			}
 			.container {
-				width: 100%; height: 320pt;
 				padding: 8pt;
 				border: solid 1pt #217dd3;
 				border-radius: 12pt;
+				background-image: linear-gradient(225deg, #ffffff30, #ffffff08);
+			}
+			#main-container {
+				width: 100%; height: calc(100vh - 64pt);
+			}
+
+			.profile-card {
+				position: relative;
+			}
+
+			.profile-image-box {
+				width: 40pt; height: 40pt;
+				padding: 0 !important;
+			}
+
+			.profile-image-box.big {
+				width: 68pt; height: 84pt;
 			}
 
 			.profile-image-container {
-				width: 40pt; height: 40pt;
+				width: 32pt; height: 32pt;
+				border-radius: 5pt;
+				padding: 0 !important;
+				background-color: #e9e5dc;
+				border: none;
+				overflow: hidden;
+				box-sizing: content-box;
+				cursor: pointer;
 			}
-			.profile-image-container-big {
-				width: 82pt; height: 94pt;
+			.profile-image-container:hover {
+				border: solid 2pt #fff;
 			}
-			.profile-image-container-big .profile-image {
-				height: 70pt;
+			.profile-image-container.big {
+				width: 64pt; height: 76pt;
+			}
+			.profile-image-container.big .profile-image {
+				height: 64pt;
 			}
 			.profile-image {
-				border: solid 1pt #333;
-				width: 100%; height: 100%;
-				border-radius: 12pt;
+				width: 100%; height: 32pt;
+				padding: 0 !important;
+				border-radius: 0 0 12pt 0;
 				background-size: cover;
+				overflow: hidden;
 			}
 			.profile-card .profile-level {
+				color: #222;
 				font-size: 10pt;
-				padding: 2pt;
+				padding: 0;
 			}
 
 			.stats-container {
@@ -68,16 +130,71 @@
 			.profile-card div {
 				padding: 6pt;
 			}
+			.stats-container {
+				height: 100%;
+				justify-content: space-between;
+			}
+			#weap-name {
+				font-size: 14pt;
+				font-weight: bold;
+			}
 			.stats-container table {
-				border-collapse: collapse;
 				border: none;
 				width: 100%; height: 100%;
+			}
+			.stats-container table tr {
+				height: 16pt;
 			}
 			.stats-container table .stat-key {
 				text-align: left;
 			}
 			.stats-container table .stat-value {
 				text-align: right;
+			}
+			.stats-container input {
+				background: none;
+				border: none;
+				width: 32pt; height: 100%;
+				font-size: 11pt;
+				font-family: Arial;
+				outline: none;
+				text-align: right;
+				margin: auto 2pt;
+			}
+
+			.table-split {
+				width: 100%;
+			}
+			.table-split table {
+				width: 42%;
+			}
+
+			.pop-up {
+				position: absolute;
+				top: 0; left: 0;
+				width: 292pt;
+				flex-wrap: wrap;
+				height: 288pt;
+				backdrop-filter: blur(3pt);
+				transition: all 0.2s;
+				opacity: 1;
+				z-index: 10;
+			}
+			.pop-up .list-container {
+				width: 100%;
+				height: 256pt;
+				flex-wrap: wrap;
+				overflow-y: scroll;
+			}
+			.pop-up .list-container::-webkit-scrollbar {
+				width: 6pt;
+			}
+			.pop-up .list-container::-webkit-scrollbar-thumb {
+				background-color: #24f3;
+			}
+			.pop-up.hidden {
+				opacity: 0;
+				z-index: -10;
 			}
 
 			.artifacts-container {
@@ -133,13 +250,15 @@
 	</head>
 	<body>
 		<div class="main row">
-			<div class="container row">
+			<div id="main-container" class="container row"style="align-items: flex-start;">
 				<div class="profile-card-container column">
 					<div class="profile-card column">
 						<div class="row">
-							<div class="profile-image-container-big">
-								<div id="chara-img-active" class="profile-image row" style="text-align: center;">[Aether]</div>
-								<div id="chara-level" class="profile-level row">Level xx</div>
+							<div class="profile-image-box big row">
+								<div class="profile-image-container big">
+									<div id="chara-img-active" class="profile-image star-5 row" style="text-align: center;">[Aether]</div>
+									<div id="chara-level" class="profile-level row">Level xx</div>
+								</div>
 							</div>
 							<div class="stats-container" id="chara-stats">
 								<table>
@@ -175,11 +294,14 @@
 					</div>
 					<div class="profile-card column">
 						<div class="row">
-							<div class="profile-image-container-big">
-								<div id="weap-img-active" class="profile-image row" style="text-align: center;">[The Flute]</div>
-								<div id="weap-level" class="profile-level row">Level xx</div>
+							<div class="profile-image-box big row">
+								<div class="profile-image-container big" onclick="showPopUp('weap')">
+									<div id="weap-img-active" class="profile-image star-4 row" style="text-align: center;">[The Flute]</div>
+									<div id="weap-level" class="profile-level row">Level xx</div>
+								</div>
 							</div>
 							<div class="stats-container" id="weap-stats">
+								<div id="weap-name">Anemona Kageuchi</div>
 								<table>
 									<tbody>
 										<tr>
@@ -194,6 +316,9 @@
 								</table>
 							</div>
 						</div>
+						<div class="pop-up container row hidden">
+							<div id="weap-select" class="list-container row"></div>
+						</div>
 						<div class="level-container" hidden>
 							<div>
 								<input id="weap-level-range" type="range" min="1" max="90" value="1" onchange="change(0,'weap-level',this)">
@@ -204,20 +329,79 @@
 						</div>
 					</div>
 					<div class="artifacts-container row">
-						<div class="profile-image-container">
-							<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_4.png);"></div>
+						<div class="profile-image-box row" onclick="displayArtifact(activeChar,0)">
+							<div class="profile-image-container">
+								<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_4.png);"></div>
+							</div>
 						</div>
-						<div class="profile-image-container">
-							<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_2.png);"></div>
+						<div class="profile-image-box row" onclick="displayArtifact(activeChar,1)">
+							<div class="profile-image-container">
+								<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_2.png);"></div>
+							</div>
 						</div>
-						<div class="profile-image-container">
-							<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_5.png);"></div>
+						<div class="profile-image-box row" onclick="displayArtifact(activeChar,2)">
+							<div class="profile-image-container">
+								<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_5.png);"></div>
+							</div>
 						</div>
-						<div class="profile-image-container">
-							<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_1.png);"></div>
+						<div class="profile-image-box row" onclick="displayArtifact(activeChar,3)">
+							<div class="profile-image-container">
+								<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_1.png);"></div>
+							</div>
 						</div>
-						<div class="profile-image-container">
-							<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_3.png);"></div>
+						<div class="profile-image-box row" onclick="displayArtifact(activeChar,4)">
+							<div class="profile-image-container">
+								<div class="profile-image" style="background-image: url(https://enka.network/ui/UI_RelicIcon_15001_3.png);"></div>
+							</div>
+						</div>
+					</div>
+					<div class="profile-card">
+						<div class="row">
+							<div class="profile-image-box big row">
+								<div class="profile-image-container big">
+									<div id="arte-img-active" class="profile-image star-4 row" style="text-align: center;">[The Flute]</div>
+									<div id="arte-level" class="profile-level row">+20</div>
+								</div>
+							</div>
+							<div class="stats-container" id="arte-mainstat">
+								<div id="arte-name">Anemona Kageuchi</div>
+								<table>
+									<tbody>
+										<tr>
+											<td class="stat-key"></td>
+											<td class="stat-value"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="row">
+							<div class="stats-container table-split row" id="arte-substats" style="justify-content: space-between;">
+								<table>
+									<tbody>
+										<tr>
+											<td class="stat-key"></td>
+											<td><input class="stat-value" onfocus="formFocus()" onblur="formBlur()" /></td>
+										</tr>
+										<tr>
+											<td class="stat-key"></td>
+											<td><input class="stat-value" onfocus="formFocus()" onblur="formBlur()" /></td>
+										</tr>
+									</tbody>
+								</table>
+								<table>
+									<tbody>
+										<tr>
+											<td class="stat-key"></td>
+											<td><input class="stat-value" onfocus="formFocus()" onblur="formBlur()" /></td>
+										</tr>
+										<tr>
+											<td class="stat-key"></td>
+											<td><input class="stat-value" onfocus="formFocus()" onblur="formBlur()" /></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -229,20 +413,30 @@
 					</div>
 					<div id="dmg-textarea">
 					</div>
+					<input onchange="demo(this)" onfocus="formFocus()" onblur="formBlur()"></input>
 				</div>
 			</div>
-			<div class="buttons-container row">
+			<div class="buttons-container row" style="display: none;">
 				<div class="button row" id="atk" onmousedown="attackStart()" onmouseup="attackEnd()">ATK</div>
 				<div class="button row" id="button-skill" onmousedown="skillStart()" onmouseup="skillEnd()">SKILL</div>
 				<div class="button row" id="burst" onclick="burst()">3</div>
-				<input onchange="demo(this)"></input>
+				<select onchange="activeChar.weapon[1] = Number(this.value); calculateStats(chara.indexOf(activeChar)); displayStats()" onfocus="formFocus()" onblur="formBlur()">
+				</select>
 			</div>
 		</div>
 	</body>
 	<script type="text/javascript">
 
-		function demo(doc){
-			let stat = scale.artSub[1][5]
+		let onFocus = false
+		function formFocus(){
+			onFocus = true
+		}
+		function formBlur(){
+			onFocus = false
+		}
+
+		function demo(doc,artType,statId){
+			let stat = scale.artSub[1][statId]
 			let value = Math.round(Number(doc.value)*10/stat)/10
 			let outValue
 			console.log (value)
@@ -336,6 +530,17 @@
 			char.setStats();
 		}
 
+		function showPopUp(target){
+			document.getElementById(target+"-select").parentElement.classList.remove("hidden")
+		}
+		function hidePopUp(node){
+			if (node.parentElement.parentElement.parentElement.classList.contains("pop-up")){
+				node.parentElement.parentElement.parentElement.classList.add("hidden")
+			} else if (node.classList.contains("pop-up")){
+				node.classList.add("hidden")
+			}
+		}
+
 		let scale = {
 			char: [
 				[0,1.000, 1.083, 1.165, 1.248, 1.330, 1.413, 1.495, 1.578, 1.661, 1.743, 1.826, 1.908, 1.991, 2.073, 2.156, 2.239, 2.321, 2.404, 2.486, 2.569, 2.651, 2.734, 2.817, 2.899, 2.982, 3.064, 3.147, 3.229, 3.312, 3.394, 3.477, 3.560, 3.642, 3.725, 3.807, 3.890, 3.972, 4.055, 4.138, 4.220, 4.303, 4.385, 4.468, 4.550, 4.633, 4.716, 4.798, 4.881, 4.963, 5.046, 5.128, 5.211, 5.294, 5.376, 5.459, 5.541, 5.624, 5.706, 5.789, 5.872, 5.954, 6.037, 6.119, 6.202, 6.284, 6.367, 6.450, 6.532, 6.615, 6.697, 6.780, 6.862, 6.945, 7.028, 7.110, 7.193, 7.275, 7.358, 7.440, 7.523, 7.606, 7.688, 7.771, 7.853, 7.936, 8.018, 8.101, 8.183, 8.266, 8.349],
@@ -353,7 +558,11 @@
 			weap: [
 				[],
 				[],
-				[],
+				[
+					[37.61, 1, 1.071, 1.141, 1.211, 1.280, 1.349, 1.417, 1.486, 1.553, 1.621, 1.688, 1.754, 1.820, 1.886, 1.952, 2.017, 2.082, 2.147, 2.211, 2.275, 2.339, 2.402, 2.466, 2.529, 2.591, 2.654, 2.716, 2.778, 2.840, 2.901, 2.962, 3.023, 3.084, 3.145, 3.205, 3.265, 3.325, 3.385, 3.445, 3.504, 3.564, 3.623, 3.682, 3.741, 3.799, 3.858, 3.916, 3.974, 4.032, 4.090, 4.148, 4.205, 4.263, 4.320, 4.377, 4.434, 4.491, 4.548, 4.605, 4.661, 4.718, 4.774, 4.830, 4.887, 4.943, 4.999, 5.054, 5.110, 5.166, 5.222, 5.277, 5.333, 5.388, 5.443, 5.498, 5.554, 5.609, 5.664, 5.719, 5.774, 5.828, 5.883, 5.938, 5.993, 6.047, 6.102, 6.156, 6.211, 6.265, 6.320],
+					[38.74, 1, 1.076, 1.152, 1.228, 1.303, 1.379, 1.454, 1.529, 1.604, 1.679, 1.754, 1.828, 1.903, 1.977, 2.051, 2.125, 2.199, 2.273, 2.347, 2.420, 2.493, 2.567, 2.640, 2.713, 2.786, 2.859, 2.931, 3.004, 3.076, 3.148, 3.221, 3.293, 3.365, 3.437, 3.508, 3.580, 3.652, 3.723, 3.794, 3.866, 3.937, 4.008, 4.079, 4.150, 4.221, 4.291, 4.362, 4.433, 4.503, 4.574, 4.644, 4.714, 4.784, 4.855, 4.925, 4.995, 5.065, 5.134, 5.204, 5.274, 5.344, 5.413, 5.483, 5.552, 5.622, 5.691, 5.761, 5.830, 5.899, 5.968, 6.038, 6.107, 6.176, 6.245, 6.314, 6.383, 6.452, 6.521, 6.590, 6.659, 6.727, 6.796, 6.865, 6.934, 7.003, 7.071, 7.140, 7.209, 7.277, 7.346],
+					[39.88, 1, 1.081, 1.162, 1.244, 1.325, 1.407, 1.489, 1.570, 1.652, 1.734, 1.816, 1.898, 1.981, 2.063, 2.145, 2.227, 2.310, 2.392, 2.474, 2.557, 2.639, 2.722, 2.804, 2.887, 2.969, 3.052, 3.134, 3.217, 3.299, 3.382, 3.464, 3.547, 3.629, 3.712, 3.794, 3.877, 3.959, 4.042, 4.124, 4.206, 4.289, 4.371, 4.454, 4.536, 4.618, 4.701, 4.783, 4.865, 4.948, 5.030, 5.112, 5.194, 5.277, 5.359, 5.441, 5.523, 5.605, 5.688, 5.770, 5.852, 5.934, 6.016, 6.098, 6.180, 6.262, 6.344, 6.427, 6.509, 6.591, 6.673, 6.755, 6.837, 6.919, 7.001, 7.083, 7.165, 7.247, 7.329, 7.411, 7.493, 7.575, 7.657, 7.739, 7.821, 7.904, 7.986, 8.068, 8.150, 8.232, 8.314]
+				],
 				[
 					[41.07, 1, 1.077, 1.154, 1.230, 1.306, 1.382, 1.457, 1.533, 1.607, 1.682, 1.757, 1.831, 1.905, 1.979, 2.052, 2.126, 2.199, 2.272, 2.345, 2.417, 2.490, 2.562, 2.634, 2.707, 2.778, 2.850, 2.922, 2.993, 3.065, 3.136, 3.207, 3.278, 3.349, 3.420, 3.490, 3.561, 3.632, 3.702, 3.772, 3.842, 3.913, 3.983, 4.053, 4.122, 4.192, 4.262, 4.332, 4.401, 4.471, 4.540, 4.609, 4.679, 4.748, 4.817, 4.886, 4.955, 5.024, 5.093, 5.162, 5.231, 5.300, 5.368, 5.437, 5.506, 5.574, 5.643, 5.711, 5.780, 5.848, 5.916, 5.985, 6.053, 6.121, 6.189, 6.257, 6.326, 6.394, 6.462, 6.530, 6.598, 6.665, 6.733, 6.801, 6.869, 6.937, 7.005, 7.072, 7.140, 7.208, 7.275],
 					[42.40, 1, 1.083, 1.165, 1.248, 1.330, 1.413, 1.495, 1.578, 1.661, 1.743, 1.826, 1.908, 1.991, 2.073, 2.156, 2.239, 2.321, 2.404, 2.486, 2.569, 2.651, 2.734, 2.817, 2.899, 2.982, 3.064, 3.147, 3.229, 3.312, 3.394, 3.477, 3.560, 3.642, 3.725, 3.807, 3.890, 3.972, 4.055, 4.138, 4.220, 4.303, 4.385, 4.468, 4.550, 4.633, 4.716, 4.798, 4.881, 4.963, 5.046, 5.128, 5.211, 5.294, 5.376, 5.459, 5.541, 5.624, 5.706, 5.789, 5.872, 5.954, 6.037, 6.119, 6.202, 6.284, 6.367, 6.450, 6.532, 6.615, 6.697, 6.780, 6.862, 6.945, 7.028, 7.110, 7.193, 7.275, 7.358, 7.440, 7.523, 7.606, 7.688, 7.771, 7.853, 7.936, 8.018, 8.101, 8.183, 8.266, 8.349],
@@ -368,7 +577,6 @@
 				]
 			],
 			weapAsc: [
-				0,
 				[0, 11.7, 23.3, 35.0, 46.7],
 				[0, 11.7, 23.3, 35.0, 46.7],
 				[0, 19.5, 38.9, 58.4, 77.8, 97.3, 116.7],
@@ -381,10 +589,10 @@
 				[47,60,73,86,100,113,126,139,152,166,179,192,205,219,232,245,258,272,285,298,311],
 				[7.0,9.0,11.0,12.9,14.9,16.9,18.9,20.9,22.8,24.8,26.8,28.8,30.8,32.8,34.7,36.7,38.7,40.7,42.7,44.6,46.6],
 				[8.7,11.2,13.7,16.2,18.6,21.1,23.6,26.1,28.6,31,33.5,36,38.5,40.9,43.4,45.9,48.4,50.8,53.3,55.8,58.3],
-				[7.8,10.0,12.2,14.4,16.6,18.8,21.0,23.2,25.4,27.6,29.8,32.0,34.2,36.4,38.6,40.8,43.0,45.2,47.4,49.6,51.8],
 				[28.0,35.9,43.8,51.8,59.7,67.6,75.5,83.5,91.4,99.3,107.2,115.2,123.1,131.0,138.9,146.9,154.8,162.7,170.6,178.6,186.5],
 				[4.7,6.0,7.3,8.6,10.0,11.3,12.6,13.9,15.2,16.6,17.9,19.2,20.5,21.9,23.2,24.5,25.8,27.2,28.5,29.8,31.1],
 				[9.3,12.0,14.6,17.3,19.9,22.5,25.2,27.8,30.5,33.1,35.7,38.4,41.0,43.7,46.3,49.0,51.6,54.2,56.9,59.6,62.2],
+				[7.8,10.0,12.2,14.4,16.6,18.8,21.0,23.2,25.4,27.6,29.8,32.0,34.2,36.4,38.6,40.8,43.0,45.2,47.4,49.6,51.8],
 				[5.4,6.9,8.4,10.0,11.5,13.0,14.5,16.1,17.6,19.1,20.6,22.1,23.7,25.2,26.7,28.2,29.8,31.3,32.8,34.3,35.9]
 			],
 			artSub: [
@@ -415,98 +623,114 @@
 		}
 		const weaponList = [
 			[
-				[4, 0,  1,	12	,		"Amenoma Kageuchi"],
-				[4, 2,  5,	 8	,		"Blackcliff Longsword"],
-				[4, 0,  2,	15	,		"Cinnabar Spindle"],
-				[4, 0,  6,	13.3,		"Favonius Sword"],
-				[4, 1,  6,	10	,		"Festering Desire"],
-				[4, 1,  3,	36	,		"Iron Sting"],
-				[4, 1,  1,	 9	,		"Kagotsurube Isshin"],
-				[4, 1,  1,	 9	,		"Lion's Roar"],
-				[4, 2, 16,	 7.5,		"Prototype Rancour"],
-				[4, 1,  1,	 9	,		"Royal Longsword"],
-				[4, 0,  6,	13.3,		"Sacrificial Sword"],
-				[4, 2,  6,	 6.7,		"Sapwood Blade"],
-				[4, 3,  3,	12	,		"The Alley Flash"],
-				[4, 1,  4,	 6	,		"The Black Sword"],
-				[4, 1,  1,	 9	,		"The Flute"],
-				[4, 1,  3,	36	,		"Tokabou Shigure"],
-				[4, 1,  3,	36	,		"Xiphos Moonlight"]
+				[3, 1,  1,	 7.7,	"9/9c",	"Cool_Steel"],
+				[3, 1,  3,	31	,	"3/3a",	"Dark_Iron_Sword"],
+				[3, 1,  1,	 7.7,	"f/f7",	"Fillet_Blade"],
+				[3, 1,  5,	10.2,	"2/23",	"Harbinger_of_Dawn"],
+				[3, 0,  6,	11.3,	"3/34",	"Skyrider_Sword"],
+				[3, 2,  2,	 6.4,	"c/c9",	"Traveler%27s_Handy_Sword"],
+				[4, 0,  1,	12	,	"e/ea",	"Amenoma_Kageuchi"],
+				[4, 2,  5,	 8	,	"6/6f",	"Blackcliff_Longsword"],
+				[4, 0,  2,	15	,	"d/dc",	"Cinnabar_Spindle"],
+				[4, 0,  6,	13.3,	"9/90",	"Favonius_Sword"],
+				[4, 1,  6,	10	,	"7/70",	"Festering_Desire"],
+				[4, 1,  3,	36	,	"3/35",	"Iron_Sting"],
+				[4, 1,  1,	 9	,	"9/96",	"Kagotsurube_Isshin"],
+				[4, 1,  1,	 9	,	"e/e6",	"Lion%27s_Roar"],
+				[4, 2, 17,	 7.5,	"e/ef",	"Prototype_Rancour"],
+				[4, 1,  1,	 9	,	"c/cd",	"Royal_Longsword"],
+				[4, 0,  6,	13.3,	"a/a0",	"Sacrificial_Sword"],
+				[4, 2,  6,	 6.7,	"0/00",	"Sapwood_Blade"],
+				[4, 3,  3,	12	,	"8/83",	"The_Alley_Flash"],
+				[4, 1,  4,	 6	,	"c/cf",	"The_Black_Sword"],
+				[4, 1,  1,	 9	,	"6/63",	"The_Flute"],
+				[4, 1,  3,	36	,	"b/b5",	"Toukabou_Shigure"],
+				[4, 1,  3,	36	,	"8/8a",	"Xiphos%27_Moonlight"],
+				[5, 2, 17,	 9	,	"6/6a",	"Aquila_Favonia"],
+				[5, 1,  3,	43	,	"3/39",	"Freedom-Sworn"],
+				[5, 1,  4,	 7.2,	"8/85",	"Haran_Geppaku_Futsu"],
+				[5, 0,  0,	14.4,	"5/52",	"Key_of_Khaj-Nisut"],
+				[5, 0,  5,	19.2,	"d/de",	"Light_of_Foliar_Incision"],
+				[5, 2,  5,	 9.6,	"0/09",	"Mistsplitter_Reforged"],
+				[5, 0,  4,	 9.6,	"2/2a",	"Primordial_Jade_Cutter"],
+				[5, 1,  6,	12	,	"0/03",	"Skyward_Blade"],
+				[5, 1,  1,	10.8,	"c/ca",	"Summit_Shaper"]
 			],
 			[
-				[4, 1,  1,	 9	,		"Akoumaru"],
-				[4, 1,  5,	12	,		"Blackcliff Slasher"],
-				[4, 0,  6,	13.3,		"Favonius Greatsword"],
-				[4, 2,  6,	 6.7,		"Forest Regalia"],
-				[4, 1,  6,	10	,		"Katsuragiriki Nagamasa"],
-				[4, 1,  1,	 9	,		"Lithic Blade"],
-				[4, 1,  1,	12	,		"Luxurious Sea-Lord"],
-				[4, 2,  3,	24	,		"Mailed Flower"],
-				[4, 1,  3,	36	,		"Makhaira Aquamarine"],
-				[4, 2,  1,	 6	,		"Prototype Archaic"],
-				[4, 1,  3,	36	,		"Rainslasher"],
-				[4, 2,  1,	 6	,		"Royal Greatsword"],
-				[4, 2,  6,	 6.7,		"Sacrificial Greatsword"],
-				[4, 1,  4,	 6	,		"Serpent Spine"],
-				[4, 2, 16,	 7.5,		"Snow-Tombed Starsilver"],
-				[4, 1,  0,	 9	,		"The Bell"],
-				[4, 1,  2,	11.3,		"Whiteblind"]
+				[4, 1,  1,	 9	,	"c/c5",	"Akuoumaru"],
+				[4, 1,  5,	12	,	"d/d7",	"Blackcliff_Slasher"],
+				[4, 0,  6,	13.3,	"9/9c",	"Favonius_Greatsword"],
+				[4, 2,  6,	 6.7,	"5/51",	"Forest_Regalia"],
+				[4, 1,  6,	10	,	"2/2e",	"Katsuragikiri_Nagamasa"],
+				[4, 1,  1,	 9	,	"3/3a",	"Lithic_Blade"],
+				[4, 1,  1,	12	,	"a/ab",	"Luxurious_Sea-Lord"],
+				[4, 2,  3,	24	,	"c/c7",	"Mailed_Flower"],
+				[4, 1,  3,	36	,	"9/90",	"Makhaira_Aquamarine"],
+				[4, 2,  1,	 6	,	"a/ab",	"Prototype_Archaic"],
+				[4, 1,  3,	36	,	"d/d4",	"Rainslasher"],
+				[4, 2,  1,	 6	,	"b/bf",	"Royal_Greatsword"],
+				[4, 2,  6,	 6.7,	"1/17",	"Sacrificial_Greatsword"],
+				[4, 1,  4,	 6	,	"8/88",	"Serpent_Spine"],
+				[4, 2, 17,	 7.5,	"4/49",	"Snow-Tombed_Starsilver"],
+				[4, 1,  0,	 9	,	"6/6e",	"The_Bell"],
+				[4, 1,  2,	11.3,	"0/04",	"Whiteblind"]
 			],
 			[
-				[4, 1,  6,	10	,		'"The Catch"'],
-				[4, 1,  5,	12	,		"Blackcliff Pole"],
-				[4, 2, 16,	 7.5,		"Crescent Pike"],
-				[4, 0,  4,	 8	,		"Deathmatch"],
-				[4, 0,  3,	48	,		"Dragon's Bane"],
-				[4, 0, 16,	15	,		"Dragonspine Spear"],
-				[4, 2,  6,	 6.7,		"Favonius Lance"],
-				[4, 2,  3,	24	,		"Kitain Cross Spear"],
-				[4, 2,  1,	 6	,		"Lithic Spear"],
-				[4, 1,  1,	 9	,		"Missive Windspear"],
-				[4, 2,  3,	24	,		"Moonpiercer"],
-				[4, 1,  6,	10	,		"Prototype Starglitter"],
-				[4, 2,  1,	 6	,		"Royal Spear"],
-				[4, 3,  1,	 3	,		"Wavebreaker's Fin"]
+				[4, 1,  6,	10	,	"f/f5",	"The_Catch"],
+				[4, 1,  5,	12	,	"d/d5",	"Blackcliff_Pole"],
+				[4, 2, 17,	 7.5,	"4/4c",	"Crescent_Pike"],
+				[4, 0,  4,	 8	,	"6/69",	"Deathmatch"],
+				[4, 0,  3,	48	,	"2/24",	"Dragon%27s_Bane"],
+				[4, 0, 17,	15	,	"1/1a",	"Dragonspine_Spear"],
+				[4, 2,  6,	 6.7,	"5/57",	"Favonius_Lance"],
+				[4, 2,  3,	24	,	"1/13",	"Kitain_Cross_Spear"],
+				[4, 2,  1,	 6	,	"2/2a",	"Lithic_Spear"],
+				[4, 1,  1,	 9	,	"9/9b",	"Missive_Windspear"],
+				[4, 2,  3,	24	,	"a/a4",	"Moonpiercer"],
+				[4, 1,  6,	10	,	"7/7e",	"Prototype_Starglitter"],
+				[4, 2,  1,	 6	,	"f/fd",	"Royal_Spear"],
+				[4, 3,  1,	 3	,	"6/66",	"Wavebreaker%27s_Fin"]
 			],
 			[
-				[4, 2,  1,	 6	,		"Alley Hunter"],
-				[4, 2,  5,	 8	,		"Blackcliff Warbow"],
-				[4, 0, 16,	15	,		"Compound Bow"],
-				[4, 1,  6,	10	,		"End of the Line"],
-				[4, 2,  6,	 6.7,		"Fading Twilight"],
-				[4, 0,  6,	13.3,		"Favonius Warbow"],
-				[4, 0,  1,	12	,		"Hamayumi"],
-				[4, 0,  1,	12	,		"King's Squire"],
-				[4, 1, 15,	11.3,		"Mitternacht Waltz"],
-				[4, 2,  1,	 6	,		"Mooun's Moon"],
-				[4, 1,  1,	 9	,		"Prototype Crescent"],
-				[4, 1,  1,	 9	,		"Royal Bow"],
-				[4, 1,  1,	 9	,		"Rust"],
-				[4, 2,  6,	 6.7,		"Scarificial Bow"],
-				[4, 1,  3,	36	,		"The Stringless"],
-				[4, 1,  4,	 6	,		"The Viridescent Hunt"],
-				[4, 1,  3,	36	,		"Windblume Ode"]
+				[4, 2,  1,	 6	,	"0/0a",	"Alley_Hunter"],
+				[4, 2,  5,	 8	,	"b/b8",	"Blackcliff_Warbow"],
+				[4, 0, 17,	15	,	"3/32",	"Compound_Bow"],
+				[4, 1,  6,	10	,	"7/71",	"End_of_the_Line"],
+				[4, 2,  6,	 6.7,	"2/2b",	"Fading_Twilight"],
+				[4, 0,  6,	13.3,	"8/85",	"Favonius_Warbow"],
+				[4, 0,  1,	12	,	"d/d9",	"Hamayumi"],
+				[4, 0,  1,	12	,	"a/a2",	"King%27s_Squire"],
+				[4, 1, 17,	11.3,	"7/77",	"Mitternachts_Waltz"],
+				[4, 2,  1,	 6	,	"4/42",	"Mouun%27s_Moon"],
+				[4, 1,  1,	 9	,	"4/43",	"Prototype_Crescent"],
+				[4, 1,  1,	 9	,	"9/99",	"Royal_Bow"],
+				[4, 1,  1,	 9	,	"1/1c",	"Rust"],
+				[4, 2,  6,	 6.7,	"e/ec",	"Sacrificial_Bow"],
+				[4, 1,  3,	36	,	"7/71",	"The_Stringless"],
+				[4, 1,  4,	 6	,	"f/ff",	"The_Viridescent_Hunt"],
+				[4, 1,  3,	36	,	"3/38",	"Windblume_Ode"]
 			],
 			[
-				[4, 1,  5,	12	,		"Blackcliff Agate"],
-				[4, 0,  1,	12	,		"Dodoco Tales"],
-				[4, 0,  1,	12	,		"Eye of Perception"],
-				[4, 1,  6,	10	,		"Favonius Codex"],
-				[4, 1,  1,	 9	,		"Frostbearing"],
-				[4, 1,  6,	10	,		"Fruit of Fulfillment"],
-				[4, 2,  6,	 6.7,		"Hakushin Ring"],
-				[4, 2,  3,	24	,		"Mappa Mare"],
-				[4, 2,  1,	 6	,		"Oathsworn Eye"],
-				[4, 1,  0,	 9	,		"Prototype Amber"],
-				[4, 2,  1,	 6	,		"Royal Grimoire"],
-				[4, 0,  3,	48	,		"Sacrificial Fragments"],
-				[4, 1,  4,	 6	,		"Solar Pearl"],
-				[4, 1,  5,	12	,		"The Widsith"],
-				[4, 1,  3,	36	,		"Wandering Evenstar"],
-				[4, 2,  6,	 6.7,		"Wine and Song"]
+				[4, 1,  5,	12	,	"a/a6",	"Blackcliff_Agate"],
+				[4, 0,  1,	12	,	"5/51",	"Dodoco_Tales"],
+				[4, 0,  1,	12	,	"6/6c",	"Eye_of_Perception"],
+				[4, 1,  6,	10	,	"3/36",	"Favonius_Codex"],
+				[4, 1,  1,	 9	,	"1/1c",	"Frostbearer"],
+				[4, 1,  6,	10	,	"9/98",	"Fruit_of_Fulfillment"],
+				[4, 2,  6,	 6.7,	"e/ee",	"Hakushin_Ring"],
+				[4, 2,  3,	24	,	"4/4d",	"Mappa_Mare"],
+				[4, 2,  1,	 6	,	"a/af",	"Oathsworn_Eye"],
+				[4, 1,  0,	 9	,	"2/2a",	"Prototype_Amber"],
+				[4, 2,  1,	 6	,	"9/99",	"Royal_Grimoire"],
+				[4, 0,  3,	48	,	"6/6c",	"Sacrificial_Fragments"],
+				[4, 1,  4,	 6	,	"f/fc",	"Solar_Pearl"],
+				[4, 1,  5,	12	,	"f/f0",	"The_Widsith"],
+				[4, 1,  3,	36	,	"4/44",	"Wandering_Evenstar"],
+				[4, 2,  6,	 6.7,	"c/c6",	"Wine_and_Song"]
 			]
 		]
 		// 41 42 44 45
+		// 44 46 48 49
 /*
 		artProb = [
 			[100],
@@ -644,9 +868,142 @@
 			}
 		}
 */
+		const artId = [4,2,5,1,3]
 
+		function artifactSubstatSplit(doc,artifact,substatInd){
+			let stat = scale.artSub[1][artifact[substatInd][0]]
+			let value = Math.round(doc.value * 10 / stat)
+		    let out = []
+		    while(value > 0){
+		        if (value - 10 >= 14 || (value - 10 <=10 && value - 10 >= 7)){
+		            out.push(3)
+		            value -= 10
+		        } else if (value - 9 >= 14 || (value - 9 <=10 && value - 9 >= 7)){
+		            out.push(2)
+		            value -= 9
+		        } else if (value - 8 >= 14 || (value - 8 <=10 && value - 8 >= 7)){
+		            out.push(1)
+		            value -= 8
+		        } else if (value - 7 >= 14 || (value - 7 <=10 && value - 7 >= 7)){
+		            out.push(0)
+		            value -= 7
+		        } else {
+		            out.push(artSubScale.indexOf(value))
+		            value = 0
+		        }
+		    }
+		    out.unshift(artifact[substatInd][0])
+		    artifact[substatInd] = out
+		    calculateStats(chara.indexOf(activeChar))
+		    displayStats()
+		    displayArtifact(activeChar,activeChar.artifacts.indexOf(artifact))
+		    console.log(activeChar.bonusStats[artifact[substatInd][0]])
+		}
+
+		function calculateArtifactMainstat(statId,arteLvl){
+			let stat = 2
+			switch (statId){
+				case 0:
+				case 1:
+					stat = 2; break
+				case 2:
+				case 17:
+					stat = 3; break
+				case 7:
+					stat = 0; break
+				case 8:
+					stat = 1; break
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+					stat = statId + 1; break
+				case 18:
+					stat = 8; break
+				default:
+					stat = 2
+			}
+			return scale.artMain[stat][arteLvl]
+		}
+
+		function calculateArtifacts(char){
+			let stats = Array(10)
+			stats.fill(Array())
+			char.artifacts.forEach(function(el,ind,arr){
+				if (el){
+					//console.log(scale.artMain[stat][el[1]])
+					if (el[0]<10){
+						char.bonusStats[el[0]] += calculateArtifactMainstat(el[0],el[1])
+					} else {
+						char.dmgBonus[el[0]-10] += calculateArtifactMainstat(el[0],el[1])
+					}
+				}
+				el.forEach(function(el1,ind1){
+					if (ind1 > 2){
+						let total = 0;
+						el1.forEach(function(el2,ind2){
+							if (ind2 > 0){
+								total += artSubScale[el2]
+							}
+						})
+						char.bonusStats[el1[0]] = (char.bonusStats[el1[0]]*10 + Math.round(total * scale.artSub[1][el1[0]]))/10
+					}
+				})
+				//console.log(stats)
+			})
+		}
+		function displayArtifact(char,id){
+
+			document.getElementById("arte-img-active").innerHTML = '<img src="https://enka.network/ui/UI_RelicIcon_1500'+char.artifacts[id][2]+'_'+artId[id]+'.png" style="width: 100%; height: 100%">'
+
+			let doc = document.getElementById("arte-mainstat")
+			let label = ""
+			if (char.artifacts[id][0] < 10){
+				label = LABEL[char.artifacts[id][0]]
+			} else {
+				label = element[char.artifacts[id][0]-10] + " Dmg Bonus"
+			}
+			doc.getElementsByClassName("stat-key")[0].innerHTML = label
+
+			doc.getElementsByClassName("stat-value")[0].innerHTML = "+" + calculateArtifactMainstat(char.artifacts[id][0],char.artifacts[id][1])
+			if (char.artifacts[id][0] == 3 || char.artifacts[id][0] < 7 || char.artifacts[id][0] > 9){
+				doc.getElementsByClassName("stat-value")[0].innerHTML += "%"
+			}
+
+			doc = document.getElementById("arte-substats")
+			char.artifacts[id].forEach(function(el,ind,arr){
+				if (ind > 2){
+					let total = 0;
+					el.forEach(function(el1,ind1){
+						if (ind1 > 0){
+							total += artSubScale[el1]
+						}
+					})
+					let value = Math.round(total * scale.artSub[1][el[0]])/10
+					doc.getElementsByClassName("stat-key")[ind-3].innerHTML = LABEL[el[0]]
+
+					if ((el[0] != 3 || el[0] > 6) && !doc.getElementsByClassName("stat-value")[ind-3].parentElement.innerHTML.includes("<span>%</span>")){
+						doc.getElementsByClassName("stat-value")[ind-3].parentElement.innerHTML += "<span>%</span>"
+					} else {
+						doc.getElementsByClassName("stat-value")[ind-3].parentElement.innerHTML.replace("<span>%</span>","")
+					}
+					doc.getElementsByClassName("stat-value")[ind-3].value = String(value)
+					if (el[0] != 3 || el[0] > 6){
+						if (value == Math.floor(value)){
+							doc.getElementsByClassName("stat-value")[ind-3].value += ".0"
+						}
+					}
+
+					doc.getElementsByClassName("stat-value")[ind-3].onchange = function(){
+						artifactSubstatSplit(doc.getElementsByClassName("stat-value")[ind-3],char.artifacts[id],ind)
+					}
+				}
+			})
+		}
+
+		const artSubScale = [7,8,9,10]
 		element = ["Pyro", "Hydro", "Anemo", "Electro", "Dendro", "Cryo", "Geo", "Physical"]
-		const LABEL = ["HP", "ATK", "DEF", "EM", "CR", "CD", "ER", "HP", "ATK", "DEF"]
+		const LABEL = ["HP", "ATK", "DEF", "EM", "Crit Rate", "Crit Dmg", "ER", "HP", "ATK", "DEF"]
 
 		function reaction(target,type){
 			output = 0
@@ -734,7 +1091,8 @@
 */
 		let chara = Array(4)
 		chara[0] = {
-			name: "Aether",
+			name: "Alhaitham",
+			avatarId: "2/2c",
 			weapName: "The Flute",
 			type: 1,
 			level: 70,
@@ -742,7 +1100,14 @@
 			vision: 2,
 			baseStats: [911.791, 17.808, 57.225],
 			ascensionStats: [3262.3718, 63.7182, 204.75, 1],
-			weapon: [0, 14, 80, 5], //type, rarity, tier, level, ascension, 2nd stat type, 2nd stat value
+			weapon: [0, 7, 80, 5], //type, rarity, tier, level, ascension, 2nd stat type, 2nd stat value
+			artifacts: [
+				[ 7, 20, 1, [1,3,2],[2,3],[4,3],[6,3,3,1,2]],
+				[ 8, 20, 1, [1,1],[2,3],[4,1],[5,2]],
+				[ 1, 20, 1, [1,1],[2,3],[4,1],[5,2]],
+				[12, 20, 1, [1,1],[2,3],[4,1],[5,2]],
+				[ 3, 20, 1, [1,1],[2,3],[4,1],[5,2]]
+			],
 			stats: [20000,1900,800,0,5,50,100],
 			dmgBonus: [0,0,46.6,0,0,0,0,0],
 			talent: [
@@ -772,6 +1137,7 @@
 
 		chara[1] = {
 			name: "Diluc",
+			avatarId: "3/3d",
 			weapName: "Wolf Gravestone",
 			type: 1,
 			level: 80,
@@ -780,6 +1146,13 @@
 			baseStats: [1010.5192, 26.068, 61.0266],
 			ascensionStats: [4149.7383, 107.04148, 250.614, 4],
 			weapon: [1, 7, 80, 5], //type, rarity, tier, level, ascension, 2nd stat type, 2nd stat value
+			artifacts: [
+				[ 7, 20, 2, [0,1],[2,3],[4,1],[6,2]],
+				[ 8, 20, 2, [0,1],[2,3],[4,1],[6,2]],
+				[ 1, 20, 2, [0,1],[2,3],[4,1],[6,2]],
+				[12, 20, 2, [0,1],[2,3],[4,1],[6,2]],
+				[ 6, 20, 2, [0,1],[2,3],[4,1],[6,2]]
+			],
 			stats: [20000,2000,800,0,5,50,100],
 			dmgBonus: [46.6,0,0,0,0,0,0,0],
 			talent: [
@@ -806,7 +1179,8 @@
 		}
 
 		chara[2] = {
-			name: "Sangonomiya Kokomi",
+			name: "Sangonomiya_Kokomi",
+			avatarId: "f/ff",
 			weapName: "Skyward Atlas",
 			type: 1,
 			level: 80,
@@ -814,12 +1188,19 @@
 			vision: 1,
 			baseStats: [1048.652, 18.2476, 51.15465],
 			ascensionStats: [4306.332, 74.92904, 210.0735, 17],
-			weapon: [4, 8, 80, 5], //type, rarity, tier, level, ascension, 2nd stat type, 2nd stat value
+			weapon: [3, 8, 80, 5], //type, rarity, tier, level, ascension, 2nd stat type, 2nd stat value
+			artifacts: [
+				[ 7, 20, 3, [0,1],[2,3],[4,1],[6,2]],
+				[ 8, 20, 3, [0,1],[2,3],[4,1],[6,2]],
+				[ 1, 20, 3, [0,1],[2,3],[4,1],[6,2]],
+				[12, 20, 3, [0,1],[2,3],[4,1],[6,2]],
+				[ 6, 20, 3, [0,1],[2,3],[4,1],[6,2]]
+			],
 			stats: [20000,2000,800,200,60,100,100],
 			dmgBonus: [46.6,0,0,0,0,0,0,0],
 			talent: [
 				[  68.38,  61.54,  94.31],
-				[ 148.32],
+				[  74.00, 148.32],
 				[  80.00, 120.00, 135.00],
 				[
 					0.00, [109.19], 132.80
@@ -846,7 +1227,8 @@
 		}
 
 		chara[3] = {
-			name: "Shikanoin Heizou",
+			name: "Shikanoin_Heizou",
+			avatarId: "2/20",
 			weapName: "Eye of Perception",
 			type: 0,
 			level: 80,
@@ -855,6 +1237,13 @@
 			baseStats: [893.5552, 18.87648, 57.33945],
 			ascensionStats: [3197.1245, 67.54129, 205.1595, 12],
 			weapon: [4, 12, 80, 5], //type, rarity, tier, level, ascension, substat type, substat value
+			artifacts: [
+				[ 7, 20, 5, [0,1],[2,3],[4,1],[6,2]],
+				[ 8, 20, 5, [0,1],[2,3],[4,1],[6,2]],
+				[ 1, 20, 5, [0,1],[2,3],[4,1],[6,2]],
+				[12, 20, 5, [0,1],[2,3],[4,1],[6,2]],
+				[ 6, 20, 5, [0,1],[2,3],[4,1],[6,2]]
+			],
 			stats: [20000,2000,800,200,60,100,100],
 			dmgBonus: [0,0,46.6,0,0,0,0,0],
 			talent: [
@@ -909,23 +1298,24 @@
 			char.weaponStats[1] = Math.floor(weapStats[3] * scale.weapSub[Math.floor(weap[2]/5)]*10)/10
 			// Base Value * Scaling per Level/5
 
-			char.weapName = weapStats[4]
+			char.weapName = weapStats[5]
 
 			char.bonusStats = Array(10)
 			char.bonusStats.fill(0)
 			char.bonusStats[weapStats[2]] += char.weaponStats[1]
 
-			char.bonusStats[7] = 4781
-			char.bonusStats[8] = 311
-			char.bonusStats[4] += 31.1
-			char.bonusStats[1] += 46.6
+			calculateArtifacts(char)
 
 			chara[index].baseStats.forEach(function(el,ind,arr){
 				char.stats[ind] = Math.round((Math.round((el * scale.char[char.type][char.level] * 10000 + char.ascensionStats[ind] * (scale.asc[char.ascension] / 182) * 10000) / 10000) + char.weaponStats[0]) * (100 + char.bonusStats[ind])/100 + char.bonusStats[ind + 7])
 			})
 
-			for (c = 3; c < 7; c++){
-				char.stats[c] += char.bonusStats[c]
+			for (c = 3; c < 10; c++){
+				if (c < 7){
+					char.stats[c] += char.bonusStats[c]
+				} else {
+					char.stats[c-7] += char.bonusStats[c]
+				}
 			}
 		}
 
@@ -1042,6 +1432,12 @@
 				activeChar = chara[targetIndex]
 			}
 			console.log("Nara", activeChar.name)
+			displayStats()
+			weaponListInit()
+			displayArtifact(activeChar,0)
+		}
+
+		function displayStats(){
 			for (c = 0; c < 4; c++){
 				let value = Math.round(activeChar.stats[c])
 				let displayValue = ""
@@ -1058,18 +1454,33 @@
 				displayValue += value
 				document.getElementById("chara-stats").getElementsByClassName("stat-value")[c].innerHTML = displayValue
 			}
-			document.getElementById("chara-img-active").innerHTML = "["+activeChar.name+"]"
+			if (activeChar.avatarId){
+				document.getElementById("chara-img-active").innerHTML = '<img src="https://static.wikia.nocookie.net/gensin-impact/images/'+activeChar.avatarId+'/'+activeChar.name+'_Icon.png" style="width: 100%; height: 100%">'
+			} else {
+				document.getElementById("chara-img-active").innerHTML = "["+activeChar.name+"]"
+			}
 			document.getElementById("chara-level").innerHTML = "Level " + activeChar.level
-			document.getElementById("weap-img-active").innerHTML = "["+activeChar.weapName+"]"
+
+			let header = weaponList[activeChar.weapon[0]][activeChar.weapon[1]]
+			document.getElementById("weap-img-active").classList.remove("star-3")
+			document.getElementById("weap-img-active").classList.remove("star-4")
+			document.getElementById("weap-img-active").classList.remove("star-5")
+			document.getElementById("weap-img-active").classList.add("star-"+header[0])
+			document.getElementById("weap-name").innerHTML = (activeChar.weapName.replace("_"," ").replace("%","&#x"))
+			if (header[4]){
+				document.getElementById("weap-img-active").innerHTML = '<img src="https://static.wikia.nocookie.net/gensin-impact/images/'+header[4]+'/Weapon_'+header[5]+'.png" style="width: 100%; height: 100%">'
+			} else {
+				document.getElementById("weap-img-active").innerHTML = "["+(activeChar.weapName.replace("_"," ").replace("%","&#x"))+"]"
+			}
 			document.getElementById("weap-level").innerHTML = "Level " + activeChar.weapon[2]
 
 			let label = ""
 			if (weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2] < 10){
 				label = LABEL[weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2]]
-				console.log(weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2])
+				//console.log(weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2])
 			} else {
-				label = element[weaponList[activeChar.weapon[1]]-10] + " Dmg Bonus"
-				console.log(weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2], "Element")
+				label = element[weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2]-10] + " Dmg Bonus"
+				//console.log(weaponList[activeChar.weapon[0]][activeChar.weapon[1]][2], "Element")
 			}
 			let value = ""
 			if (label == "EM"){
@@ -1081,6 +1492,7 @@
 			document.getElementById("weap-stats").getElementsByClassName("stat-value")[0].innerHTML = activeChar.weaponStats[0]
 			document.getElementById("weap-stats").getElementsByClassName("stat-value")[1].innerHTML = value
 		}
+
 		activeCharChange(0)
 
 		var fieldTimeout = [6,[]]
@@ -1257,7 +1669,6 @@
 		const sequence = 0
 		const skillField = false
 */
-
 		function skillStart(){
 			if (activeChar.status[1][0]){
 				activeChar.status[1][3] = true
@@ -1374,7 +1785,7 @@
 		var keyHold = false
 
 		window.addEventListener("keydown",function(e){
-			if (!keyHold){
+			if (!keyHold && !onFocus){
 				if (e.keyCode == 87){
 					attackStart()
 				} else if (e.keyCode == 69){
@@ -1388,16 +1799,47 @@
 		})
 
 		window.addEventListener("keyup",function(e){
-			if (e.keyCode == 87){
-				attackEnd()
-			} else if (e.keyCode == 69){
-				skillEnd()
+			if (!onFocus){
+				if (e.keyCode == 87){
+					attackEnd()
+				} else if (e.keyCode == 69){
+					skillEnd()
+				}
+				keyHold = false
 			}
-			keyHold = false
 		})
 
-		activeChar.talent[1][0] = activeChar.talent[1][0]*scale.talent[0][6]
-		activeChar.talent[1][1] = activeChar.talent[1][1]*scale.talent[0][6]
+		//activeChar.talent[1][0] = activeChar.talent[1][0]*scale.talent[0][6]
+		//activeChar.talent[1][1] = activeChar.talent[1][1]*scale.talent[0][6]
+
+		function changeWeapon(target){
+			activeChar.weapon[1] = target
+			calculateStats(chara.indexOf(activeChar))
+			displayStats()
+		}
+
+		function weaponListInit(){
+			let txt = ""
+			weaponList[activeChar.weapon[0]].forEach(function(el,ind,arr){
+				//let def = ""
+				//if (ind == activeChar.weapon[1]){
+				//	def = " selected"
+				//}
+				//txt += "<option value='"+ind+"'"+def+">" + el[4] + "</option>"
+				txt += '<div class="profile-image-box big row">'
+				txt += 	'<div class="profile-image-container big" onclick="changeWeapon('+ind+'); hidePopUp(this)">'
+				txt += 		'<div class="profile-image row star-'+el[0]+'" style="text-align: center;">'
+				if (el[4]){
+					txt += 			'<img src="https://static.wikia.nocookie.net/gensin-impact/images/'+el[4]+'/Weapon_'+el[5]+'.png" style="width: 100%; height: 100%">'
+				} else {
+					txt += '['+el[5].replace("_"," ").replace("%","&#x")+']'
+				}
+				txt += 		'</div>'
+				txt += 	'</div>'
+				txt += '</div>'
+			})
+			document.getElementById("weap-select").innerHTML = txt
+		}
 
 		//char.setBaseStats()
 		//char.setStats()
