@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+	<head>
+	</head>
+	<body style="background: #333">
+		<canvas id="main" width="640" height="360" style="box-shadow: 0 0 16px 4px rgba(0,0,0,0.8);"/>
+	</body>
+	<script>
+
+		camera = {
+			width: 640, height: 360,
+			position: [7,7,0],
+			rotation: [0,0,60],
+			fov: 60,
+			setVector: function(){
+				camera.vector = [-Math.cos((camera.rotation[2]/180)*Math.PI)*Math.cos((camera.rotation[0]/180)*Math.PI),-Math.sin((camera.rotation[2]/180)*Math.PI)*Math.cos((camera.rotation[0]/180)*Math.PI),-Math.sin((camera.rotation[0]/180)*Math.PI)]
+				//console.log(camera.vector);
+			},
+			setLimitVectorX: function(){
+				a = (1/Math.cos((camera.fov/360)*Math.PI))*Math.sin((camera.fov/180)*Math.PI)*Math.sin(((90-camera.rotation[0])/180*Math.PI));
+				b = (1/Math.cos((camera.fov/360)*Math.PI))*Math.cos((camera.fov/180)*Math.PI);
+				camera.limitVectorX =  [-a*Math.sin(((90-camera.rotation[2])/180)*Math.PI)+b*Math.cos(((90-camera.rotation[2])/180)*Math.PI), -a*Math.cos(((90-camera.rotation[2])/180)*Math.PI)-b*Math.sin(((90-camera.rotation[2])/180)*Math.PI), (1/Math.cos((camera.fov/360)*Math.PI))*(-Math.sin((camera.fov/180)*Math.PI)*Math.cos(((90-camera.rotation[0])/180*Math.PI)))];
+				//console.log(camera.limitVectorX);
+			},
+			setLimitVectorY: function(){
+				angle = Math.atan((camera.height/camera.width)/(camera.focal*2));
+				rot = (angle/Math.PI)*180 + camera.rotation[0];
+				mag = 1/Math.cos(angle);
+				camera.limitVectorY = [-Math.cos((camera.rotation[2]/180)*Math.PI)*Math.cos((rot/180)*Math.PI)*mag,-Math.sin((camera.rotation[2]/180)*Math.PI)*Math.cos((rot/180)*Math.PI)*mag,-Math.sin((rot/180)*Math.PI)*mag];
+				//console.log(camera.limitVectorY);
+			},
+			setFocal: function(){
+				camera.focal = 0.5*(Math.cos(((camera.fov/2)*Math.PI)/180)/Math.sin(((camera.fov/2)*Math.PI)/180));
+			}
+		}
+
+		function cameraReset(){
+			camera.setVector(); camera.setFocal(); camera.setLimitVectorX(); camera.setLimitVectorY();
+		}
+
+		cameraReset();
+
+		let canvas = document.getElementById("main");
+		main = {
+			ctx: canvas.getContext('2d')
+		}
+
+		object = {
+			vertices: [[1,1,1],[1,-1,1],[-1,-1,1],[-1,1,1],[1,1,-1],[1,-1,-1],[-1,-1,-1],[-1,1,-1]],
+			faces: [[0,4,5,1],[0,4,7,3],[0,1,2,3],[2,6,5,1],[2,6,7,3],[4,5,6,7]],
+			normals: [[1,0,0],[0,1,0],[0,0,1],[0,-1,0],[-1,0,0],[0,0,-1]],
+			renders: []
+		}
+		function draw(){
+			main.ctx.clearRect(0,0,camera.width,camera.height);
+			object.renders.forEach(function(item){
+				main.ctx.beginPath();
+				item.forEach(function(_item,_index){
+					if(_index == 0){
+						main.ctx.moveTo(_item[0]+camera.width/2,_item[1]+camera.height/2);
+					} else {
+						main.ctx.lineTo(_item[0]+camera.width/2,_item[1]+camera.height/2);
+					}
+				})
+				main.ctx.closePath();
+				main.ctx.stroke();
+			})
+		}
+		function matrixAdd(arr1,arr2){
+			return [arr1[0]+arr2[0], arr1[1]+arr2[1], arr1[2]+arr2[2]];
+		}
+		function matrixSubtract(arr1,arr2){
+			return [arr1[0]-arr2[0], arr1[1]-arr2[1], arr1[2]-arr2[2]];
+		}
+		function matrixAbsolute(arr){
+			return Math.sqrt(arr[0]**2+arr[1]**2+arr[2]**2);
+		}
+		function matrixDot(arr1,arr2){
+			return arr1[0]*arr2[0]+arr1[1]*arr2[1]+arr1[2]*arr2[2];
+		}
+		function matrixCDot(arr,cons){
+			return [arr[0]*cons,arr[1]*cons,arr[2]*cons];
+		}
+
+		function setRender(){
+			object.renders = [];
+			vert = object.vertices
+			object.faces.forEach(function(item,index){
+				if(matrixDot(object.normals[index],camera.vector)<=0){
+					object.renders[index] = Array(item.length);
+					output = Array(item.length);
+					check = 0;
+					item.forEach(function(_item,_index){
+						renderVector = matrixSubtract(vert[_item], camera.position);
+						renderDot = matrixDot(renderVector,camera.vector);
+						renderSimXLimit = matrixSubtract(matrixAdd(matrixCDot(camera.limitVectorX,renderDot),camera.position),matrixAdd(matrixCDot(camera.vector,renderDot),camera.position));
+						renderSimYLimit = matrixSubtract(matrixAdd(matrixCDot(camera.limitVectorY,renderDot),camera.position),matrixAdd(matrixCDot(camera.vector,renderDot),camera.position));
+						renderSimVector = matrixSubtract(vert[_item],matrixAdd(matrixCDot(camera.vector,renderDot),camera.position));
+						renderXScale = (matrixDot(renderSimXLimit,renderSimVector)/matrixAbsolute(renderSimXLimit)**2);
+						renderYScale = (matrixDot(renderSimYLimit,renderSimVector)/matrixAbsolute(renderSimYLimit)**2);
+						renderX = renderXScale*(camera.width/2);
+						renderY = renderYScale*(camera.height/2);
+						if(renderXScale > 1 || renderXScale < -1 || renderYScale > 1 || renderYScale < -1){
+							check++;
+						}
+						output[_index] = [Math.round(renderX),Math.round(renderY)];
+					})
+					if(check != output.length){
+						object.renders[index] = output;
+					}
+				}
+				
+			});
+		}
+
+		function mainloop(){
+			cameraReset();
+			setRender(); draw();
+		}
+
+		window.addEventListener("keydown",function(e){
+			switch(e.keyCode){
+				case 38:
+					camera.position[0]+=camera.vector[0]/8;
+					camera.position[1]+=camera.vector[1]/8;
+					mainloop();
+					break;
+				case 40:
+					camera.position[0]-=camera.vector[0]/8;
+					camera.position[1]-=camera.vector[1]/8;
+					mainloop();
+					break;
+				case 37:
+					camera.rotation[2]-=1;
+					mainloop();
+					break;
+				case 39:
+					camera.rotation[2]+=1;
+					mainloop();
+					break;
+
+				default:
+					console.log(e.keyCode);
+			}
+		})
+
+	</script>
+</html>
