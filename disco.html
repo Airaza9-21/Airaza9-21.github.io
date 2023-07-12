@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Disco?</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				height: 100vh;
+			}
+
+			#main {
+				height: 100%;
+				background-color: black;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-evenly;
+			}
+
+			.row {
+				display: flex;
+				justify-content: space-evenly;
+			}
+
+			.box {
+				background-color: #222;
+				width: 28px; height: 28px;
+			}
+
+			.lamp {
+				width: 100%; height: 100%;
+				background-color: red;
+				opacity: 0;
+				animation-duration: 5s;
+			}
+
+			@keyframes blink {
+				0% {opacity: 0;}
+				72% {opacity: 0.7;}
+				100% {opacity: 0;}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<div class="row">
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+				<div class="box">
+					<div class="lamp" onclick="blink(this)"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		let c,d;
+		const WIDTH = Math.floor(window.innerWidth/32), HEIGHT = Math.floor(window.innerHeight/32)
+		let txt = ''
+		for (c = 0; c < HEIGHT; c++){
+			txt += '<div class="row">'
+			for (d = 0; d < WIDTH; d++){
+				txt += '<div class="box"><div class="lamp" onclick="blink(this)"></div></div>'
+			}
+			txt += '</div>'
+		}
+		document.getElementById("main").innerHTML = txt
+
+		const colors = ["#ea047e", "#16f000", "#f0ff42", "#39b5e0", "#ff5f9e"]
+
+		function blink(doc){
+			doc.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]
+			doc.style.animationName = "blink"
+			doc.time = setTimeout(reset,5500,doc)
+		}
+
+		function reset(doc){
+			doc.style.animationName = ""
+		}
+
+		function random(){
+			let ok = false
+			let index = 0
+			while (!ok){
+				index = Math.floor(Math.random()*WIDTH*HEIGHT)
+				if (document.getElementsByClassName("lamp")[index].style.animationName == ''){
+					blink(document.getElementsByClassName("lamp")[index])
+					ok = true
+				}
+				//console.log("err")
+			}
+		}
+
+		let time = setInterval(random,100)
+	</script>
+</html>
